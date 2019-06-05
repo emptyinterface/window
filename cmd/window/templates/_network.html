@@ -1,0 +1,31 @@
+
+<header>
+	<div><label>CIDR</label> {{ .CidrBlock }}</div>
+	<div><label>TotalIPs</label> {{ .TotalIPs }}</div>
+	<div><label>TotalIPsAllotted</label> {{ .TotalIPsAllotted }}</div>
+	<div><label>TotalIPsAvailable</label> {{ .TotalIPsAvailable }}</div>
+	<div><label>TotalIPsInUse</label> {{ .TotalIPsInUse }}</div>
+	<div><label>Subnets</label> {{ len .Subnets }}</div>
+</header>
+
+<network class="group vix">
+	<h1><a href="{{ prefix . }}/network">Network</a></h1>
+	<table><tr>{{ range $index, $az := .AvailabilityZones }}
+		<td><div class="group">
+			<name>{{ $az.Name }}</name>
+			{{ range $index, $subnet := $az.Subnets }}
+				{{ template "_subnet.html" $subnet }}
+			{{ end }}
+		</div></td>
+	{{ end }}</tr></table>
+</network>
+
+{{ template "_network_igws.html" . }}
+
+{{ template "_network_vpns.html" . }}
+
+{{ template "_network_vpcps.html" . }}
+
+{{ template "_network_vpces.html" . }}
+
+{{ template "_network_enis.html" . }}

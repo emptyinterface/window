@@ -1,0 +1,9 @@
+<ami id="{{ .ImageId }}" class="node state-{{ .State }}{{ if .Inactive }} inactive{{ end }}">
+	<name>{{ .Name }}</name>
+	<age>{{ uptime .CreationDate }}</age>
+	<div>
+		<div>{{ .Description }}</div>
+		<div>Instances: {{ len .Instances }}</div>
+	</div>
+	<data data-url="/_data/ami/{{ .ImageId }}"></data>
+</ami>

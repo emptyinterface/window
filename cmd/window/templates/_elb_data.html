@@ -1,0 +1,70 @@
+<h3>5 minute summary</h3>
+
+
+{{ if not .Stats.UnHealthyHostCountAvg }}
+	<error>UnHealthyHostCountAvg: {{ .Stats.UnHealthyHostCountAvg }}</error>
+{{ end }}
+{{ if not .Stats.BackendConnectionErrors }}
+	<error>BackendConnectionErrors: {{ .Stats.BackendConnectionErrors }}</error>
+{{ end }}
+{{ if not .Stats.SurgeQueueLengthAvg }}
+	<error>SurgeQueueLengthAvg: {{ .Stats.SurgeQueueLengthAvg }}</error>
+{{ end }}
+{{ if not .Stats.SpilloverCountAvg }}
+	<error>SpilloverCountAvg: {{ .Stats.SpilloverCountAvg }}</error>
+{{ end }}
+
+<p>
+	{{ printf "%.f" .Stats.RequestPerSecond }} reqs/sec
+	{{ .Stats.Latency.Min }}/{{ .Stats.Latency.Avg }}/{{ .Stats.Latency.Max }}
+	(min, avg, max)
+</p>
+<p>
+{{ .Stats.Status.Code2XX }}/{{ .Stats.Status.Code3XX }}/{{ .Stats.Status.Code4XX }}/{{ .Stats.Status.Code5XX }}
+(2XX/3XX/4XX/5XX)
+</p>
+
+<p>
+	<h4>HealthCheck</h4>
+	<p><span>HealthyThreshold</span>: {{ .HealthCheck.HealthyThreshold }} <span>UnhealthyThreshold</span>: {{ .HealthCheck.UnhealthyThreshold }}</p>
+	<p><span>Interval</span>: {{ .HealthCheck.Interval }} <span>Timeout</span>: {{ .HealthCheck.Timeout }}</p>
+	<p><span>Target</span>: {{ .HealthCheck.Target }}</p>
+</p>
+
+{{ if .BackendServerDescriptions }}
+	<p>BackendServerDescriptions: {{ .BackendServerDescriptions }}</p>
+{{ end }}
+
+
+<h3>Listeners</h3>
+<table>
+	<tr><th>Instance Protocol</th><th>Instance Port</th><th>ELB Protocol</th><th>ELB Port</th></tr>
+	{{ range $index, $l := .ListenerDescriptions }}
+		<tr>
+			<td>{{ $l.Listener.InstanceProtocol }}</td>
+			<td>{{ $l.Listener.InstancePort }}</td>
+			<td>{{ $l.Listener.Protocol }}</td>
+			<td>{{ $l.Listener.LoadBalancerPort }}</td>
+		</tr>
+	{{ end }}
+</table>
+
+<h3>Instances</h3>
+<table>
+	<tr><th>AZ</th><th>Instances</th></tr>
+	{{ range $index, $az := .AvailabilityZones }}<tr><td>{{ $az.Name }}</td></tr>{{ end }}
+	{{ range $index, $az := .AvailabilityZones }}<tr><td>
+		{{ range $index, $inst := $.Instances }}
+			{{ if same $inst.AvailabilityZone $az }}
+			{{ template "_instance.html" $inst }}
+			{{ end }}
+		{{ end }}
+	</td></tr>{{ end }}
+</table>
+<p>Policies: {{ .Policies }}</p>
+<p>SecurityGroups: {{ .SecurityGroups }}</p>
+<p>SourceSecurityGroup: {{ .SourceSecurityGroup }}</p>
+{{ if .Subnets }}
+	<p>Subnets: {{ .Subnets }}</p>
+{{ end }}
+

@@ -1,0 +1,11 @@
+<elb>
+	<name>{{ if eq .Scheme "internal" }}({{ .Name }}){{ else }}{{ .Name }}{{ end }}</name>
+	<uptime> {{ uptime .CreatedTime }}</uptime>
+
+	<div>
+		<div>{{ .DNSName }}</div>
+	</div>
+
+	<data data-url="/_data/elb/{{ .Id }}"></data>
+</elb>
+

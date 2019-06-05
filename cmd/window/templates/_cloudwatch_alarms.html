@@ -1,0 +1,29 @@
+<style>
+	cloudwatchalarms table { width: 100%; table-layout: fixed; }
+	cloudwatchalarm.node {
+		width:600px; max-width: inherit;
+	}
+	cloudwatchalarm.node sns.node {
+		display: block;
+		max-width: inherit;
+	}
+	cloudwatchalarm.node.OK terms {
+		color:green;
+	}
+	cloudwatchalarm.node.ALARM terms {
+		color:red;
+	}
+	cloudwatchalarm.node.INSUFFICIENT_DATA terms {
+		color:#ccc;
+	}
+
+</style>
+
+<cloudwatchalarms class="group">
+	<h1><a href="{{ prefix . }}/cloudwatch_alarms">CloudWatch Alarms</a></h1>
+		{{ range $index, $cloudwatchAlarm := .CloudWatchAlarms }}
+			{{ template "_cloudwatch_alarm.html" $cloudwatchAlarm }}
+		{{ end }}</tr>
+</cloudwatchalarms>
+
+

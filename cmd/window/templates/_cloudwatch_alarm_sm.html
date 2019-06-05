@@ -1,0 +1,3 @@
+<cloudwatch_alarm class="node state-{{ .StateValue }}{{ if .Inactive }} inactive{{ end }}" data-id="{{ .Id }}">
+	<name>{{ .Name }}</name>{{ .StateValue }}
+</cloudwatch_alarm>

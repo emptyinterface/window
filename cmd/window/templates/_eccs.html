@@ -1,0 +1,8 @@
+{{ if .ElasticCacheClusters }}
+	<eccs class="group">
+		<h1><a href="{{ prefix . }}/eccs">Elasticache Clusters</a></h1>
+		{{ range $index, $ecc := .ElasticCacheClusters }}
+			{{ template "_ecc.html" $ecc }}
+		{{ end }}
+	</eccs>
+{{ end }}

@@ -1,0 +1,27 @@
+<vpce id="{{ .Id }}" class="node state-{{ .State }}{{ if .Inactive }} inactive{{ end }}">
+	<name>{{ .Name }}</name>
+	<uptime>{{ uptime .CreationTimestamp }}</uptime>
+	<div>{{ .ServiceName }}/<highlight class="state-{{ .State }}">{{ .State }}</highlight></div>
+	<data>
+		<div><label>Name</label> {{ .Name }}</div>
+		<div><label>VpcEndpointId</label> {{ .VpcEndpointId }}</div>
+		<div><label>CreationTimestamp</label> {{ .CreationTimestamp }}</div>
+		<div><label>State</label> {{ .State }}</div>
+		<div><label>ServiceName</label> {{ .ServiceName }}</div>
+		<div><label>Policies</label>
+			{{ range $index, $stmt := .Policy.Statements }}
+				<div class="policy">
+					<div><label>StatementId</label> {{ $stmt.Sid }}</div>
+					<div><label>Effect</label> {{ $stmt.Effect }}</div>
+					<div><label>Principal</label> {{ $stmt.Principal }}</div>
+					<div><label>Action</label>
+						{{ range $index, $v := $stmt.Action }}<div>{{ $v }}</div>{{ end }}
+					</div>
+					<div><label>Resource</label>
+						{{ range $index, $v := $stmt.Resource }}<div>{{ $v }}</div>{{ end }}
+					</div>
+				</div>
+			{{ end }}
+		</div>
+	</data>
+</vpce>

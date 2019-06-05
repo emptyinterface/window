@@ -1,0 +1,31 @@
+<div><label>Name</label> {{ .Name }}</div>
+<div><label>uptime</label> {{ uptime .CacheClusterCreateTime }}</div>
+<div><label>CacheClusterId</label> {{ .CacheClusterId }}</div>
+<div><label>CacheClusterStatus</label> {{ .CacheClusterStatus }}</div>
+<div><label>CacheNodeType</label> {{ .CacheNodeType }}</div>
+<div><label>CacheNodes</label> {{ .CacheNodes }}</div>
+<div><label>CacheParameterGroup</label> {{ .CacheParameterGroup }}</div>
+<div><label>CacheSecurityGroups</label> {{ .CacheSecurityGroups }}</div>
+<div><label>CacheSubnetGroupName</label> {{ .CacheSubnetGroupName }}</div>
+<div><label>ConfigurationEndpoint</label> {{ .ConfigurationEndpoint }}</div>
+<div><label>Engine</label> {{ .Engine }}</div>
+<div><label>EngineVersion</label> {{ .EngineVersion }}</div>
+<div><label>NotificationConfiguration</label> {{ .NotificationConfiguration }}</div>
+<div><label>NumCacheNodes</label> {{ .NumCacheNodes }}</div>
+<div><label>PendingModifiedValues</label> {{ .PendingModifiedValues }}</div>
+<div><label>PreferredAvailabilityZone</label> {{ .PreferredAvailabilityZone }}</div>
+<div><label>PreferredMaintenanceWindow</label> {{ .PreferredMaintenanceWindow }}</div>
+<div><label>ReplicationGroupId</label> {{ .ReplicationGroupId }}</div>
+<div><label>VPCSecurityGroups</label> {{ .VPCSecurityGroups }}</div>
+<div><label>SnapshotRetentionLimit</label> {{ .SnapshotRetentionLimit }}</div>
+<div><label>SnapshotWindow</label> {{ .SnapshotWindow }}</div>
+
+<!-- 	Region            *Region
+	AvailabilityZones []*AvailabilityZone
+	Classic           *Classic
+	VPC               *VPC
+	SecurityGroups    []*SecurityGroup
+	CloudWatchAlarms  []*CloudWatchAlarm
+
+	Stats ECCNodeStatsSet
+ -->

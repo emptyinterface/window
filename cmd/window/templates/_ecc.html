@@ -1,0 +1,90 @@
+<ecc id="{{ .Id }}" class="node state-{{ .State }}{{ if .Inactive }} inactive{{ end }}">
+	{{ if .Stats }}{{ with $stats := .AggregateStats }}
+	<statgroup>
+		{{ if $stats.Redis }}
+			<div>{{ commify $stats.Redis.CurrItems }} items</div>
+			<div>{{ humanBytes $stats.Redis.BytesUsedForCache 0 }} total ({{ humanBytes $stats.FreeableMemory 1 }} free)</div>
+			{{ if $stats.SwapUsage }}
+				<error>SwapUsage: {{ humanBytes $stats.SwapUsage 0 }}</error>
+			{{ end }}
+			<div>{{ commify $stats.Redis.CurrConnections }} connections ({{ $stats.Redis.NewConnections }} new)</div>
+		{{ end }}
+		{{ if $stats.Memcached }}
+			<div>{{ commify $stats.Memcached.CurrItems }} items ({{ commify $stats.Memcached.NewItems }} new)</div>
+			<div>{{ humanBytes $stats.Memcached.BytesUsedForCacheItems 1 }} total ({{ humanBytes $stats.FreeableMemory 1 }} free)</div>
+			<div>{{ commify $stats.Memcached.CurrConnections }} connections ({{ commify $stats.Memcached.NewConnections }} new)</div>
+		{{ end }}
+		<table class="stats">
+			<tr>
+				<td>
+					<network><table><tr>
+						<td>Set/Get:</td>
+						{{ if $stats.Redis }}
+							<td><arrow>↙</arrow>{{ rps $stats.Redis.SetTypeCmdsPerSecond "" }}</td>
+							<td><arrow>↗</arrow>{{ rps $stats.Redis.GetTypeCmdsPerSecond "" }}</td>
+						{{ end }}
+						{{ if $stats.Memcached }}
+							<td><arrow>↙</arrow>{{ rps $stats.Memcached.CmdSetPerSecond "" }}</td>
+							<td><arrow>↗</arrow>{{ rps $stats.Memcached.CmdGetPerSecond "" }}</td>
+						{{ end }}
+					</tr></table></network>
+					<network><table><tr>
+						<td>Network:</td>
+						<td><arrow>↙</arrow>{{ humanBytes $stats.NetworkBytesInPerSecond 0 }}</td>
+						<td><arrow>↗</arrow>{{ humanBytes $stats.NetworkBytesOutPerSecond 0 }}</td>
+					</tr></table></network>
+				</td>
+			</tr>
+		</table>
+		{{ if $stats.Redis }}
+				<div>{{ rps $stats.Redis.CacheHitsPerSecond "hits" }}</div>
+				<div>{{ rps $stats.Redis.CacheMissesPerSecond "misses" }}</div>
+				<div>{{ rps $stats.Redis.EvictionsPerSecond "evictions" }}</div>
+				<div>{{ rps $stats.Redis.ReclaimedPerSecond "reclaimed" }}</div>
+				{{ if $stats.Redis.ReplicationBytesPerSecond }}
+					<div>
+						{{ humanBytes $stats.Redis.ReplicationBytesPerSecond 1 }}/sec @
+						{{ $stats.Redis.ReplicationLag.Min }}/{{ $stats.Redis.ReplicationLag.Avg }}/{{ $stats.Redis.ReplicationLag.Max }}
+						replicated
+					</div>
+				{{ end }}
+				{{ if $stats.Redis.SaveInProgress }}
+					<div><hightlight>SaveInProgress</hightlight></div>
+				{{ end }}
+		{{ end }}
+		{{ if $stats.Memcached }}
+				<div>{{ rps $stats.Memcached.GetHitsPerSecond "hits" }}</div>
+				<div>{{ rps $stats.Memcached.GetMissesPerSecond "misses" }}</div>
+				<div>{{ rps $stats.Memcached.CmdFlushPerSecond "flushes" }}</div>
+				<div>{{ rps $stats.Memcached.EvictionsPerSecond "evictions" }}</div>
+				<div>{{ rps $stats.Memcached.ReclaimedPerSecond "reclaimed" }}</div>
+				<div>{{ rps $stats.Memcached.EvictedUnfetchedPerSecond "evicted unfetched" }}</div>
+				<div>{{ rps $stats.Memcached.ExpiredUnfetchedPerSecond "expired unfetched" }}</div>
+		{{ end }}
+
+	</statgroup>
+	{{ end }}{{ end }}
+	<name>{{ if .VPC }}({{ end }}{{ .Name }}{{ if .VPC }}){{ end }}</name>
+	<price>${{ printf "%.2f" .MonthlyCost }}/mo</price>
+	<uptime>{{ uptime .CacheClusterCreateTime }}</uptime>
+	<div>
+		{{ if (ne .CacheClusterStatus "available") }}
+			<warn>{{ .CacheClusterStatus }}</warn>
+		{{ else }}
+			<highlight class="state-{{ .CacheClusterStatus }}">{{ .CacheClusterStatus }}</highlight>
+		{{ end }}
+	</div>
+	<div>
+		<engine>{{ .Engine }} {{ .EngineVersion }}</engine>
+		<div>{{ .CacheNodeType }}</div>
+		{{ range $index, $node := .CacheNodes }}
+		<instance class="node">
+			<span>{{ .CacheNodeId }}</span>
+			<span>{{ .CacheNodeStatus }}</span>
+			<span>{{ .CustomerAvailabilityZone }}</span>
+		</instance>
+		{{ end }}
+		{{ template "_cloudwatch_errors.html" .CloudWatchAlarms }}
+	</div>
+	<data data-url="/_data/ecc/{{ .Id }}"></data>
+</ecc>

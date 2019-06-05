@@ -1,0 +1,149 @@
+{{ if .ELBs }}
+	<elbs class="group top">
+		<h1><a href="{{ prefix . }}/elbs">Elastic Load Balancers</a></h1>
+		{{ range $index, $elb := .ELBs }}
+			<elb id="elb-{{ $elb.Name }}" class="group{{ if $elb.Inactive }} inactive{{ end }}">
+				{{ if $elb.Stats }}
+					<statgroup>
+						{{ rps .Stats.RequestsPerSecond "reqs" }}
+						@ {{ .Stats.Latency.Min }}/{{ .Stats.Latency.Avg }}/{{ .Stats.Latency.Max }}
+
+						{{ if .Stats.RequestsPerSecond }}
+							<div style="margin-top:4px;">{{ rps .Stats.StatusPerSecond.Code2XX "2XX" }}</div>
+							<div>{{ rps .Stats.StatusPerSecond.Code3XX "3XX" }}</div>
+							<div style="color:orange;">{{ rps .Stats.StatusPerSecond.Code4XX "4XX" }}</div>
+							<div style="color:red;">{{ rps .Stats.StatusPerSecond.Code5XX "5XX" }}</div>
+						{{ end }}
+
+						{{ if .Stats.UnHealthyHostCountAvg }}<error>UnHealthyHostCountAvg: {{ .Stats.UnHealthyHostCountAvg }}</error>{{ end }}
+						{{ if .Stats.BackendConnectionErrorsAvg }}<error>BackendConnectionErrorsAvg: {{ .Stats.BackendConnectionErrorsAvg }}</error>{{ end }}
+						{{ if .Stats.SurgeQueueLengthAvg }}<error>SurgeQueueLengthAvg: {{ .Stats.SurgeQueueLengthAvg }}</error>{{ end }}
+						{{ if .Stats.SpilloverCountAvg }}<error>SpilloverCountAvg: {{ .Stats.SpilloverCountAvg }}</error>{{ end }}
+						{{ template "_cloudwatch_errors.html" .CloudWatchAlarms }}
+					</statgroup>
+				{{ end }}
+				<name>{{ $elb.Name }}</name>
+				{{ with $tree := $elb.Tree }}
+				{{ range $index, $ag := $tree.AutoScalingGroups }}
+					{{ if $ag.AutoScalingGroup }}
+						<autoscalinggroup id="{{ $ag.AutoScalingGroup.Id }}" class="group state-{{ $ag.AutoScalingGroup.State }}">
+							<name>{{ $ag.AutoScalingGroup.Name }}</name>
+							{{ template "_cloudwatch_errors.html" $ag.AutoScalingGroup.CloudWatchAlarms }}
+							<data>
+								<div><label>Name</label> {{ $ag.AutoScalingGroup.Name }}</div>
+								<div><label>Age</label> {{ uptime $ag.AutoScalingGroup.CreatedTime }}</div>
+								<div><label>AvailabilityZoneNames</label> {{ range $index, $az := .AvailabilityZones }}{{ template "_az_sm.html" $az.AvailabilityZone }}{{ end }}</div>
+								<div><label>DefaultCooldown</label> {{ $ag.AutoScalingGroup.DefaultCooldown }}</div>
+								{{ if $ag.AutoScalingGroup.EnabledMetrics }}<div><label>EnabledMetrics</label> {{ $ag.AutoScalingGroup.EnabledMetrics }}</div>{{ end }}
+								<div><label>HealthCheckGracePeriod</label> {{ $ag.AutoScalingGroup.HealthCheckGracePeriod }}</div>
+								<div><label>HealthCheckType</label> {{ $ag.AutoScalingGroup.HealthCheckType }}</div>
+								<div><label>DesiredCapacity</label> {{ $ag.AutoScalingGroup.DesiredCapacity }}</div>
+								<div><label>MinSize</label> {{ $ag.AutoScalingGroup.MinSize }}</div>
+								<div><label>MaxSize</label> {{ $ag.AutoScalingGroup.MaxSize }}</div>
+								<div><label>AutoScalingInstances</label> {{ range $index, $inst := $ag.AutoScalingGroup.Instances }}{{ template "_instance_sm.html" $inst }}{{ end }}</div>
+								<div><label>LoadBalancerNames</label> {{ $ag.AutoScalingGroup.LoadBalancerNames }}</div>
+								<div><label>PlacementGroup</label> {{ $ag.AutoScalingGroup.PlacementGroup }}</div>
+								<div><label>Tags</label>
+									{{ range $index, $tag := $ag.AutoScalingGroup.Tags }}
+										{{ $tag.Key }}:{{ $tag.Value }}{{ if $tag.PropagateAtLaunch }}(propagate){{ end }}
+									{{ end }}
+								</div>
+								<div><label>SuspendedProcesses</label> {{ $ag.AutoScalingGroup.SuspendedProcesses }}</div>
+								<div><label>TerminationPolicies</label>
+									{{ range $index, $policy := $ag.AutoScalingGroup.TerminationPolicies }}
+									{{ $policy }}
+									{{ end }}
+								</div>
+								<div><label>AutoScalingGroupARN</label> {{ $ag.AutoScalingGroup.AutoScalingGroupARN }}</div>
+								<div><label>LaunchConfigurationName</label> {{ $ag.AutoScalingGroup.LaunchConfigurationName }}</div>
+								<div><label>VPCZoneIdentifier</label> {{ $ag.AutoScalingGroup.VPCZoneIdentifier }}</div>
+	<!-- 					AvailabilityZones []*AvailabilityZone
+						Instances         []*Instance
+						CloudWatchAlarms  []*CloudWatchAlarm
+	 -->
+							</data>
+
+					{{ end }}
+					{{ range $index, $az := $ag.AvailabilityZones }}
+						<availabilityzone class="group state-{{ $az.AvailabilityZone.State }}"><name>{{ $az.AvailabilityZone.Name }}</name>
+						{{ range $index, $subnet := $az.Subnets }}
+							{{ if $subnet.Subnet }}<subnet class="group"><name>{{ $subnet.Subnet.Name }}</name>{{ end }}
+								{{ range $index, $inst := $subnet.Instances }}
+									{{ template "_instance.html" $inst }}
+								{{ end }}
+							{{ if $subnet.Subnet }}</subnet>{{ end }}
+						{{ end }}
+						</availabilityzone>
+					{{ end }}
+					{{ if $ag.AutoScalingGroup }}</autoscalinggroup>{{ end }}
+				{{ end }}
+				{{ end }}
+
+				<data>
+					<div><label>Name</label> {{ $elb.Name }}</div>
+					<div><label>Scheme</label> {{ $elb.Scheme }}</div>
+					{{ if $elb.VPC }}
+						<div><label>VPC</label> {{ $elb.VPC.Name }}</div>
+					{{ end }}
+					<div><label>uptime</label> {{ uptime $elb.CreatedTime }}</div>
+					<div><label>DNSName</label> {{ $elb.DNSName }}</div>
+					{{ if (ne $elb.DNSName $elb.CanonicalHostedZoneName) }}
+						<div><label>CanonicalHostedZoneName</label> {{ $elb.CanonicalHostedZoneName }}</div>
+						<div><label>CanonicalHostedZoneNameID</label> {{ $elb.CanonicalHostedZoneNameID }}</div>
+					{{ end }}
+					<div><label>AvailabilityZones</label></div>
+					{{ range $index, $az := $elb.AvailabilityZones }}
+						{{ template "_az_sm.html" $az }}
+					{{ end }}
+					{{ if $elb.BackendServerDescriptions }}
+						<div><label>BackendServerDescriptions</label> {{ $elb.BackendServerDescriptions }}</div>
+					{{ end }}
+					<div><label>ListenerDescriptions</label>
+						{{ range $index, $l := $elb.ListenerDescriptions }}
+							<div>
+								ELB {{ $l.Listener.Protocol }}/{{ $l.Listener.LoadBalancerPort }}
+								&rarr;
+								Instance {{ $l.Listener.InstanceProtocol }}/{{ $l.Listener.InstancePort }}
+							</div>
+						{{ end }}
+					</div>
+					<div><label>HealthCheck</label>
+						{{ if $elb.HealthCheck }}
+							Poll {{ $elb.HealthCheck.Target }} every {{ $elb.HealthCheck.Interval }} seconds with
+							a {{ $elb.HealthCheck.Timeout }} second timeout.  Mark unhealthy after
+							{{ $elb.HealthCheck.UnhealthyThreshold }} fails.  Mark healthy after
+							{{ $elb.HealthCheck.HealthyThreshold }} successes.
+						{{ else }}
+							None
+						{{ end }}
+					</div>
+					<div><label>Policies</label>
+					{{ range $index, $cp := .Policies.LBCookieStickinessPolicies }}
+						<div>{{ $cp.PolicyName }} ({{ value $cp.CookieExpirationPeriod | seconds }})</div>
+					{{ end }}
+					{{ range $index, $cp := .Policies.OtherPolicies }}
+						<div>{{ $cp }}</div>
+					{{ end }}
+					</div>
+					<div><label>SourceSecurityGroup</label>
+						{{ if $elb.SourceSecurityGroup }}
+							{{ template "_security_group_sm.html" $elb.SourceSecurityGroup }}
+						{{ else }}
+							{{ $elb.SourceSecurityGroupName }}
+						{{ end }}
+					</div>
+					{{ if $elb.SecurityGroups }}
+					<div><label>SecurityGroups</label></div>
+					{{ range $index, $sg := $elb.SecurityGroups }}
+						{{ template "_security_group_sm.html" $sg }}
+					{{ end }}
+					{{ end }}
+					<div><label>Instances</label> ({{ len $elb.Instances }})</div>
+					{{ range $index, $inst := $elb.Instances }}
+						{{ template "_instance_sm.html" $inst }}
+					{{ end }}
+				</data>
+			</elb>
+		{{ end }}
+	</elbs>
+{{ end }}

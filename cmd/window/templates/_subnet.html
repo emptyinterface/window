@@ -1,0 +1,36 @@
+<subnet id="{{ .Id }}" class="node state-{{ .State }}{{ if .Inactive }} inactive{{ end }}">
+	<name>{{ .Name }}</name> {{ .CidrBlock }}
+	<div><highlight class="state-available">{{ .AvailableIpAddressCount }}</highlight>/{{ .TotalIPs }} available</div>
+	{{ if .NATGateway }}
+		<div style="display:inline-block;">{{ template "_natgw.html" .NATGateway }}</div>
+	{{ end }}
+	{{ if .InternetGateway }}
+		<div style="display:inline-block;">{{ template "_igw.html" .InternetGateway }}</div>
+	{{ end }}
+	<data>
+		<div><label>AvailabilityZoneName</label> {{ .AvailabilityZoneName }}</div>
+		<div><label>AvailableIpAddressCount</label> {{ .AvailableIpAddressCount }}</div>
+		<div><label>CidrBlock</label> {{ .CidrBlock }}</div>
+		<div><label>DefaultForAz</label> {{ .DefaultForAz }}</div>
+		<div><label>MapPublicIpOnLaunch</label> {{ .MapPublicIpOnLaunch }}</div>
+		<div><label>State</label> {{ .State }}</div>
+		<div><label>SubnetId</label> {{ .SubnetId }}</div>
+		<div><label>Tags</label>
+			{{ range $index, $tag := .Tags }}{{ $tag.Key }}:{{ $tag.Value }} {{ end }}
+		</div>
+		<div><label>VpcId</label> {{ .VpcId }}</div>
+
+<!-- 	VPC              *VPC
+	AvailabilityZone *AvailabilityZone
+	Instances        []*Instance
+	RouteTables      []*RouteTable
+	ACLs             []*ACL
+
+	InternetGateway       *InternetGateway
+	NAT                   *Instance
+	VPNConnections        []*VPNConnection
+	VPCEndpoints          []*VPCEndpoint
+	VPCPeeringConnections []*VPCPeeringConnection
+ -->
+	</data>
+</subnet>

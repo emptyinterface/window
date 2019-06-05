@@ -1,0 +1,43 @@
+<name><a href="https://console.aws.amazon.com/rds/home?region={{ .Region.Name }}#dbinstances:id={{ .DBInstanceIdentifier }};sf=all" target="_blank">{{ .Name }}</a></name>
+<stats>
+	<p>{{ .DBInstanceClass }}</p>
+	<p>{{ .Engine }} {{ .EngineVersion }}</p>
+	<p>{{ uptime .InstanceCreateTime }}</p>
+	<p>VPC: {{ .VPC }}</p>
+	<p>{{ .MasterUsername }}@{{ .Endpoint.Address }}:{{ .Endpoint.Port }}</p>
+	<p>CPUUtilization: {{ .Stats.CPUUtilization }}</p>
+	<p>DatabaseConnections: {{ .Stats.DatabaseConnections }}</p>
+	{{ if .Stats.DiskQueueDepth }}
+		<p>DiskQueueDepth: {{ .Stats.DiskQueueDepth }}</p>
+	{{ end }}
+	<p>FreeableMemory: {{ humanBytes .Stats.FreeableMemory 1 }}</p>
+	<p>SwapUsage: {{ .Stats.SwapUsage }}</p>
+	<div>
+		<h3>disk</h3>
+		<p>{{ .AllocatedStorage }} GB {{ .StorageTypeName }}{{ if eq .StorageTypeName "IOPS" }} ({{ .Iops }}/sec){{ end }}</p>
+		<p>FreeStorageSpace: {{ humanBytes .Stats.FreeStorageSpace 1 }}</p>
+		<p>ReadIOPS: {{ .Stats.ReadIOPS }}</p>
+		<p>WriteIOPS: {{ .Stats.WriteIOPS }}</p>
+		<p>ReadLatency Min: {{ .Stats.ReadLatency.Min }}</p>
+		<p>ReadLatency Avg: {{ .Stats.ReadLatency.Avg }}</p>
+		<p>ReadLatency Max: {{ .Stats.ReadLatency.Max }}</p>
+		<p>WriteLatency Min: {{ .Stats.WriteLatency.Min }}</p>
+		<p>WriteLatency Avg: {{ .Stats.WriteLatency.Avg }}</p>
+		<p>WriteLatency Max: {{ .Stats.WriteLatency.Max }}</p>
+		<p>DiskReadThroughputBytesPerSecond: {{ humanBytes .Stats.DiskReadThroughputBytesPerSecond 0 }}</p>
+		<p>DiskWriteThroughputBytesPerSecond: {{ humanBytes .Stats.DiskWriteThroughputBytesPerSecond 0 }}</p>
+	</div>
+	<p>NetworkReceiveThroughputBytesPerSecond: {{ humanBytes .Stats.NetworkReceiveThroughputBytesPerSecond 0 }}</p>
+	<p>NetworkTransmitThroughputBytesPerSecond: {{ humanBytes .Stats.NetworkTransmitThroughputBytesPerSecond 0 }}</p>
+	{{ if .ReadReplicaDBInstanceIdentifiers }}
+		<p>ReplicaLag: {{ .Stats.ReplicaLag }}</p>
+		{{ range $index, $replica := .ReadReplicaDBInstanceIdentifiers }}
+			<p>{{ $replica }}</p>
+		{{ end }}
+	{{ end }}
+	{{ range $index, $sg := .VpcSecurityGroups }}
+	<p>{{ $sg }}</p>
+	{{ end }}
+</stats>
+<pre>{{ range $index, $entry := .Log }}{{ $entry }}
+{{ end }}</pre>

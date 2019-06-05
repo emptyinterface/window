@@ -1,0 +1,23 @@
+<vpg id="{{ .Id }}" class="node state-{{ .State }}{{ if .Inactive }} inactive{{ end }}">
+	<name>{{ .Name }}</name> (vpg)
+	<div>{{ .Type }}/{{ .AvailabilityZone }}/<highlight class="state-{{ .State }}">{{ .State }}</highlight></div>
+	{{ template "_cloudwatch_errors.html" .CloudWatchAlarms }}
+
+	<data>
+		<div><label>Name</label> {{ .Name }}</div>
+		<div><label>VpnGatewayId</label> {{ .VpnGatewayId }}</div>
+		<div><label>AvailabilityZone</label> {{ .AvailabilityZone }}</div>
+		<div><label>State</label> {{ .State }}</div>
+		<div><label>Tags</label> {{ range $index, $tag := .Tags }}{{ $tag.Key }}:{{ $tag.Value }} {{ end }}</div>
+		<div><label>Type</label> {{ .Type }}</div>
+		<div><label>VpcAttachments</label>
+			{{ range $index, $a := .VpcAttachments }}
+				{{ range $index, $vpc := $.VPCs }}
+					{{ if (eq (value $a.VpcId) $vpc.VpcId) }}
+						<div>{{ template "_vpc_sm.html" $vpc }} {{ value $a.State }}</div>
+					{{ end }}
+				{{ end }}
+			{{ end }}
+		</div>
+	</data>
+</vpg>

@@ -1,0 +1,8 @@
+{{ if .AMIs }}
+	<amis class="group">
+		<h1><a href="{{ prefix . }}/amis">AMIs</a></h1>
+		{{ range $index, $ami := .AMIs }}
+			{{ template "_ami.html" $ami }}
+		{{ end }}
+	</amis>
+{{ end }}

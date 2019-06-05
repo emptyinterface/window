@@ -1,0 +1,35 @@
+<div><label>Name</label> {{ .Name }}</div>
+<div><label>DeliveryPolicy</label> {{ .DeliveryPolicy }}</div>
+<div><label>DisplayName</label> {{ .DisplayName }}</div>
+<div><label>Owner</label> {{ .Owner }}</div>
+<div><label>Policy</label>
+	{{ range $index, $statement := .Policy.Statements }}<div class="policy">
+		<div><label>Effect</label> {{ $statement.Effect }}</div>
+		<div><label>Principal</label> {{ $statement.Principal }}</div>
+		<div><label>Action</label> {{ $statement.Action }}</div>
+		<div><label>Condition</label> {{ $statement.Condition }}</div>
+	</div>{{ end }}
+</div>
+<div><label>SubscriptionsConfirmed</label> {{ .SubscriptionsConfirmed }}</div>
+<div><label>SubscriptionsDeleted</label> {{ .SubscriptionsDeleted }}</div>
+<div><label>SubscriptionsPending</label> {{ .SubscriptionsPending }}</div>
+<div><label>EffectiveDeliveryPolicy</label>
+	{{ range $type, $policy := .EffectiveDeliveryPolicies }}<div class="policy">{{ $type }}:
+		<div><label>BackoffFunction</label> {{ $policy.DefaultHealthyRetryPolicy.BackoffFunction }}</div>
+		<div><label>MaxDelayTarget</label> {{ $policy.DefaultHealthyRetryPolicy.MaxDelayTarget }}</div>
+		<div><label>MinDelayTarget</label> {{ $policy.DefaultHealthyRetryPolicy.MinDelayTarget }}</div>
+		<div><label>NumMaxDelayRetries</label> {{ $policy.DefaultHealthyRetryPolicy.NumMaxDelayRetries }}</div>
+		<div><label>NumMinDelayRetries</label> {{ $policy.DefaultHealthyRetryPolicy.NumMinDelayRetries }}</div>
+		<div><label>NumNoDelayRetries</label> {{ $policy.DefaultHealthyRetryPolicy.NumNoDelayRetries }}</div>
+		<div><label>NumRetries</label> {{ $policy.DefaultHealthyRetryPolicy.NumRetries }}</div>
+		<div><label>DisableSubscriptionOverrides</label> {{ $policy.DisableSubscriptionOverrides }}</div>
+	</div>{{ end }}
+</div>
+<div><label>TopicArn</label> {{ .TopicArn }}</div>
+
+<!-- 		TopicName        string // tail of arn
+		Region           *Region
+		Subscribers      []*SNSSubscription
+		Stats            *TopicStats
+		CloudWatchAlarms []*CloudWatchAlarm
+ -->

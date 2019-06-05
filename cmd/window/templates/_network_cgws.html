@@ -1,0 +1,8 @@
+{{ if .CustomerGateways }}
+	<cgws class="group">
+		<h1><a href="{{ prefix . }}/cgws">Customer Gateways</a></h1>
+		{{ range $index, $cgw := .CustomerGateways }}
+			{{ template "_cgw.html" $cgw }}
+		{{ end }}
+	</cgws>
+{{ end }}

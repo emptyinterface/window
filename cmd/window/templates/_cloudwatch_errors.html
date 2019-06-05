@@ -1,0 +1,10 @@
+
+{{ with $alarms := alarmState . "FAIL" }}
+	{{ if $alarms }}
+		<div>
+			{{ range $index, $alarm := $alarms }}
+				<error>{{ $alarm.Name }}: {{ $alarm.State }}</error>
+			{{ end }}
+		</div>
+	{{ end }}
+{{ end }}

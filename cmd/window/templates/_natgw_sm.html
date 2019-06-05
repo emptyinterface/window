@@ -1,0 +1,6 @@
+<natgw class="node state-{{ .State }}{{ if .Inactive }} inactive{{ end }}" data-id="{{ .Id }}">
+<name>{{ .Name }}</name>
+{{ range $index, $addr := .NATGatewayAddresses }}
+	<span>{{ $addr.PrivateIp }}<name> = </name>{{ $addr.PublicIp }}</span>
+{{ end }}
+</natgw>

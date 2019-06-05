@@ -1,0 +1,11 @@
+{{ if .SecurityGroups }}
+	<securitygroups class="group">
+		<h1><a href="{{ prefix . }}/security_groups">Security Groups</a></h1>
+		{{ range $index, $securityGroup := .SecurityGroups }}
+			{{ if not $securityGroup.Inactive }}{{ template "_security_group.html" $securityGroup }}{{ end }}
+		{{ end }}
+		{{ range $index, $securityGroup := .SecurityGroups }}
+			{{ if $securityGroup.Inactive }}{{ template "_security_group.html" $securityGroup }}{{ end }}
+		{{ end }}
+	</securitygroups>
+{{ end }}

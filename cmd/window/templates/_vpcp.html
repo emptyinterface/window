@@ -1,0 +1,21 @@
+<vpcp id="{{ .Id }}" class="node state-{{ .State }}{{ if .Inactive }} inactive{{ end }}">
+	<name>{{ .Name }}</name>
+	{{ .RequesterVPC }} &rarr; {{ .AccepterVPC }} <highlight class="state-{{ .State }}">{{ .State }}</highlight>
+	{{ if (ne (value .Status.Code) "active") }}
+		<div>{{ .Status.Message }}</div>
+	{{ end }}
+	<data>
+		<div><label>Name</label> {{ .Name }}</div>
+		<div><label>VpcPeeringConnectionId</label> {{ .VpcPeeringConnectionId }}</div>
+		<div><label>RequesterVPC</label> {{ if .RequesterVPC }}{{ template "_vpc_sm.html" .RequesterVPC }}{{ end }}</div>
+		<div><label>AccepterVPC</label> {{ if .AccepterVPC }}{{ template "_vpc_sm.html" .AccepterVPC }}{{ end }}</div>
+		<div><label>Status</label> {{ .State }}</div>
+		{{ if not .ExpirationTime.IsZero }}
+			<div><label>ExpirationTime</label> {{ .ExpirationTime }}</div>
+		{{ end }}
+		<div><label>Tags</label> {{ range $index, $tag := .Tags }}{{ $tag.Key }}:{{ $tag.Value }} {{ end }}</div>
+
+	<!-- Subnets      []*Subnet -->
+
+	</data>
+</vpcp>

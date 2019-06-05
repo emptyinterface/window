@@ -1,0 +1,22 @@
+
+<instance id="{{ .Id }}" class="node state-{{ .State }}{{ if .Inactive }} inactive{{ end }}">
+	<name>{{ .Name }}</name><price>${{ printf "%.2f" .MonthlyCost }}/mo</price>
+	<uptime>{{ uptime .LaunchTime }}</uptime>
+	<div><terms>{{ .PortsInvolved }}</terms></div>
+	{{ if .Stats }}
+		<table class="stats">
+			<tr>
+				<td class="cpu"><table><tr>{{ range $index, $cpu := .CPUs }}<td><bar style="height:{{ $cpu }}%"></bar></td>{{ end }}</tr></table></td>
+				<td>
+					<memory><user style="width:{{ .MemoryUser }}%"></user><system style="width:{{ .MemorySystem }}%"></system></memory>
+					<disk><bar style="width:{{ .Disk }}%"></bar></disk>
+					<network><table><tr>
+						<td><in><arrow>↙</arrow>{{ .NetworkInString }}<bar style="width:{{ .NetworkInNormal }}%"></bar></in></td>
+						<td><out><arrow>↗</arrow>{{ .NetworkOutString }}<bar style="width:{{ .NetworkOutNormal }}%"></bar></out></td>
+					</tr></table></network>
+				</td>
+			</tr>
+		</table>
+	{{ end }}
+	<data data-url="/_data/instance/{{ .Id }}"></data>
+</instance>

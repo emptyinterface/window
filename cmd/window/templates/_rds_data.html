@@ -1,0 +1,56 @@
+<div><label>Name</label> {{ .Name }}</div>
+<div><label>AvailabilityZoneName</label> {{ .AvailabilityZoneName }}</div>
+<div><label>BackupRetentionPeriod</label> {{ .BackupRetentionPeriod }}</div>
+<div><label>CACertificateIdentifier</label> {{ .CACertificateIdentifier }}</div>
+<div><label>CharacterSetName</label> {{ .CharacterSetName }}</div>
+<div><label>CopyTagsToSnapshot</label> {{ .CopyTagsToSnapshot }}</div>
+<div><label>DBClusterIdentifier</label> {{ .DBClusterIdentifier }}</div>
+<div><label>DBInstanceClass</label> {{ .DBInstanceClass }}</div>
+<div><label>DBInstanceIdentifier</label> {{ .DBInstanceIdentifier }}</div>
+<div><label>DBInstanceStatus</label> {{ .DBInstanceStatus }}</div>
+<div><label>DBName</label> {{ .DBName }}</div>
+<div><label>DBParameterGroups</label> {{ .DBParameterGroups }}</div>
+<div><label>DBSecurityGroups</label> {{ .DBSecurityGroups }}</div>
+<div><label>DBSubnetGroup</label> {{ .DBSubnetGroup }}</div>
+<div><label>DbInstancePort</label> {{ .DbInstancePort }}</div>
+<div><label>DbiResourceId</label> {{ .DbiResourceId }}</div>
+<div><label>Endpoint</label> {{ .Endpoint }}</div>
+<div><label>Engine</label> {{ .Engine }}</div>
+<div><label>EngineVersion</label> {{ .EngineVersion }}</div>
+<div><label>InstanceCreateTime</label> {{ .InstanceCreateTime }}</div>
+<div><label>Iops</label> {{ .Iops }}</div>
+<div><label>KmsKeyId</label> {{ .KmsKeyId }}</div>
+<div><label>LatestRestorableTime</label> {{ .LatestRestorableTime }}</div>
+<div><label>LicenseModel</label> {{ .LicenseModel }}</div>
+<div><label>MasterUsername</label> {{ .MasterUsername }}</div>
+<div><label>MultiAZ</label> {{ .MultiAZ }}</div>
+<div><label>OptionGroupMemberships</label> {{ .OptionGroupMemberships }}</div>
+<div><label>PendingModifiedValues</label> {{ .PendingModifiedValues }}</div>
+<div><label>PreferredBackupWindow</label> {{ .PreferredBackupWindow }}</div>
+<div><label>PreferredMaintenanceWindow</label> {{ .PreferredMaintenanceWindow }}</div>
+<div><label>PubliclyAccessible</label> {{ .PubliclyAccessible }}</div>
+<div><label>ReadReplicaDBInstanceIdentifiers</label> {{ .ReadReplicaDBInstanceIdentifiers }}</div>
+<div><label>ReadReplicaSourceDBInstanceIdentifier</label> {{ .ReadReplicaSourceDBInstanceIdentifier }}</div>
+<div><label>SecondaryAvailabilityZone</label> {{ .SecondaryAvailabilityZone }}</div>
+<div><label>StatusInfos</label> {{ .StatusInfos }}</div>
+<div><label>StorageEncrypted</label> {{ .StorageEncrypted }}</div>
+<div><label>StorageType</label> {{ .StorageType }}</div>
+<div><label>TdeCredentialArn</label> {{ .TdeCredentialArn }}</div>
+<div><label>VpcSecurityGroups</label> {{ .VpcSecurityGroups }}</div>
+
+<div><label>Logs</label>
+	<pre>{{ range $index, $line := .Log }}{{ $line }}
+	{{ end }}</pre>
+</div>
+
+<!-- 		Region           *Region
+		Classic          *Classic
+		VPC              *VPC
+		AvailabilityZone *AvailabilityZone
+		StorageTypeName  string
+		SecurityGroups   []*SecurityGroup
+		CloudWatchAlarms []*CloudWatchAlarm
+
+		MemoryCapacity int64
+		Stats          *DBInstanceStats
+ -->

@@ -1,0 +1,208 @@
+
+ <instance id="{{ .Id }}" class="state-{{ .State }}">
+	<stats>
+		<name>{{ .Name }}</name>
+		{{ if .AMI }}<ami>AMI: {{ .AMI.Name }}</ami>{{ end }}
+		{{ template "_cloudwatch_alarms.html" . }}
+		{{ if not .UnreachableReason }}
+			<cpus>
+				<table><tr>
+				{{ range $index, $inuse := .CPUs }}
+				<td><cpu style="height: {{ $inuse }}%">&nbsp;</cpu></td>
+				{{ end }}
+				</tr></table>
+			</cpus>
+			<memory>
+				<div class="memory user" style="width: {{ .MemoryUser }}%">&nbsp;</div>
+				<div class="memory system" style="width: {{ .MemorySystem }}%">&nbsp;</div>
+			</memory>
+			<disk><div style="width: {{ .Disk }}%"></div></disk>
+			<network>{{ .NetworkIO }}</network>
+			<uptime>{{ uptime .LaunchTime }}</uptime>
+		{{ end }}
+	</stats>
+
+	<data>
+		{{ if .UnreachableReason }}
+		<error>{{ .UnreachableReason }}</error>
+		{{ else }}
+		<stats>
+			<cpus>
+				<table><tr>
+				{{ range $index, $inuse := .CPUs }}
+				<td><cpu style="height: {{ $inuse }}%">&nbsp;</cpu></td>
+				{{ end }}
+				</tr></table>
+			</cpus>
+			<memory>
+				<div class="memory user" style="width: {{ .MemoryUser }}%">&nbsp;</div>
+				<div class="memory system" style="width: {{ .MemorySystem }}%">&nbsp;</div>
+			</memory>
+			<disk><div style="width: {{ .Disk }}%"></div></disk>
+			<network>{{ .NetworkIO }}</network>
+			<uptime>{{ uptime .LaunchTime }}</uptime>
+		</stats>
+		{{ end }}
+		<h3>
+			{{ .Name }} ({{ .State.Name }})<br />
+			(<a href="https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:search={{ .InstanceId }}" target="_blank">{{ .InstanceId }}</a> {{ .InstanceType }}</a>)<br />
+			(<a href="https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Images:visibility=owned-by-me;search={{ .ImageId }}" target="_blank">{{ .ImageId }}</a> {{ .Architecture }} {{ .Hypervisor }} {{ .VirtualizationType }})
+		</h3>
+		{{ if .StateReason }}<p>StateReason: {{ .StateReason.Code }}</p>{{ end }}
+		{{ if .StateTransitionReason }}<p>StateTransitionReason: {{ .StateTransitionReason }}</p>{{ end }}
+		<p>DetailedMonitoring: {{ .Monitoring.State }}</p>
+
+		<h3>Tags</h3>
+		<ul>
+			{{ range $index, $tag := .Tags }}
+				<li>{{ $tag.Key }}: {{ $tag.Value }}</li>
+			{{ end }}
+		</ul>
+
+
+		{{ if value .Placement.GroupName }}
+			<p>PlacementGroup: {{ .Placement.GroupName }} (#{{ .AmiLaunchIndex }})</p>
+		{{ end }}
+
+		<p>LaunchTime: {{ shortTime .LaunchTime }}</p>
+
+
+		<p>KeyName: {{ .KeyName }}</p>
+		<p>IamInstanceProfile {{ .IamInstanceProfile }}</p>
+
+		<p>SpotInstanceRequestId {{ .SpotInstanceRequestId }}</p>
+		<p>InstanceLifecycle {{ .InstanceLifecycle }}</p>
+
+		<p>EbsOptimized: {{ .EbsOptimized }}</p>
+		{{ if .BlockDeviceMappings }}
+			<h3>BlockDeviceMappings</h3>
+			<p>RootDevice: {{ .RootDeviceName }} ({{ .RootDeviceType }})</p>
+			<table>
+				<tr><th>Name</th><th>VolumeId</th><th>Status</th><th>DeleteOnTermination</th></tr>
+				{{ range $index, $dev := .BlockDeviceMappings }}
+				<tr>
+					<td>{{ $dev.DeviceName }}</td>
+					{{ if $dev.Ebs }}
+						<td>{{ $dev.Ebs.VolumeId }}</td>
+						<td>{{ $dev.Ebs.Status }}</td>
+						<td>{{ $dev.Ebs.DeleteOnTermination }}</td>
+					{{ else }}
+						<td></td><td></td><td></td>
+					{{ end }}
+				{{ end }}
+				</tr>
+			</table>
+		{{ end }}
+
+		<p>SourceDestCheck {{ .SourceDestCheck }}</p>
+		<p>Enhanced Networking: {{ default .SriovNetSupport "disabled" }}</p>
+		{{ if .Subnet }}
+			<h3>Subnet: <a href="https://console.aws.amazon.com/vpc/home?region=us-east-1#subnets:filter={{ .Subnet.SubnetId }}" target="_blank">{{ .Subnet.Name }} ({{ .Subnet.SubnetId }})</a></h3>
+			<p>{{ .Subnet.CIDR }}</p>
+			<h3>Route Tables</h3>
+			<table>
+				<tr><th>Origin</th><th>DestinationCidr</th><th>Dest</th><th>State</th></tr>
+				{{ range $index, $table := .Subnet.RouteTables }}
+					{{ range $index, $route := $table.Routes }}
+						<tr>
+							<td>{{ $route.Origin }}</td>
+							<td>{{ $route.DestinationCidrBlock }}</td>
+							<td>
+								{{ if $route.GatewayId }}{{ $route.GatewayId }}
+								{{ else if $route.InstanceId }}{{ $route.InstanceId }}
+								{{ else if $route.NetworkInterfaceId }}{{ $route.NetworkInterfaceId }}
+								{{ else if $route.VpcPeeringConnectionId }}{{ $route.VpcPeeringConnectionId }}
+								{{ end }}
+							</td>
+							<td>{{ $route.State }}</td>
+						</tr>
+					{{ end }}
+				{{ end }}
+			</table>
+			<h3>ACLs</h3>
+			<table>
+			<tr><th>RuleNumber</th><th>RuleAction</th><th>Protocol</th><th>PortRange</th><th>CidrBlock</th><th>Type</th></tr>
+				{{ range $index, $acl := .Subnet.ACLs }}
+					<tr><td colspan="6">{{ $acl.Name }}</td></tr>
+					{{ range $index, $entry := $acl.Entries }}
+						<tr>
+							<td>{{ .RuleNumber }}</td>
+							<td>{{ .RuleAction }}</td>
+							<td>{{ .Protocol }}</td>
+							<td>{{ .PortRange }}</td>
+							<td>{{ .CidrBlock }}</td>
+							<td>{{ if .Egress }}Egress{{ else }}Ingress{{end}}</td>
+						</tr>
+					{{ end }}
+				{{ end }}
+			</table>
+		{{ end }}
+		{{ if .NetworkInterfaces }}
+			<h3>NetworkInterfaces<h3>
+			{{ range $index, $ni := .NetworkInterfaces }}
+				<h3>{{ $ni.NetworkInterfaceId }}</h3>
+				{{ if $ni.Description }}<p>{{ $ni.Description }}</p>{{ end }}
+				<table>
+					<tr><th>PrivateIp</th><th>PublicIp</th><th>Primary</th></tr>
+					{{ range $index, $assoc := $ni.PrivateIpAddresses }}
+						<tr>
+							<td>{{ $assoc.PrivateIpAddress }}</td>
+							<td>{{ if $assoc.Association }}{{ $assoc.Association.PublicIp }}{{ end }}</td>
+							<td>{{ $assoc.Primary }}</td>
+						</tr>
+					{{ end }}
+				</table>
+				<h3>Security Groups</h3>
+
+				<table>
+					<tr><th>Group</th><th>From</th><th>To</th><th>CIDR</th><th>Type</th></tr>
+					{{ range $index, $group := $ni.Groups }}
+						{{ range $index, $sg := $.SecurityGroups }}
+							{{ if softEquals $sg.GroupId $group.GroupId }}
+								{{ range $index, $ingress := $sg.IpPermissions }}
+									<tr>
+										<td>{{ $sg.Name }}</td>
+										<td>{{ $ingress.FromPort }}</td>
+										<td>{{ $ingress.ToPort }}</td>
+										<td>
+											{{ range $index, $range := $ingress.IpRanges }}
+												<p>{{ $range.CidrIp }}</p>
+											{{ end }}
+										</td>
+										<td>Ingress ({{ $ingress.IpProtocol }})</td>
+									</tr>
+								{{ end }}
+								{{ range $index, $egress := .IpPermissionsEgress }}
+									<tr>
+										<td>{{ $egress.IpProtocol }}</td>
+										<td>{{ $egress.FromPort }}</td>
+										<td>{{ $egress.ToPort }}</td>
+										<td>
+											{{ range $index, $range := $egress.IpRanges }}
+												<p>{{ $range.CidrIp }}</p>
+											{{ end }}
+										</td>
+										<td>Egress</td>
+									</tr>
+								{{ end }}
+							{{ end }}
+						{{ end }}
+					{{ end }}
+				</table>
+			{{ end }}
+		{{ else }}
+			{{ if .SecurityGroups }}
+				<table>
+					<tr><th>PrivateIp</th><th>PublicIp</th></tr>
+					<tr><td>{{ .PrivateIpAddress }}</td><td>{{ .PublicIpAddress }}</td></tr>
+				</table>
+				<h3>Security Groups</h3>
+				{{ range $index, $sg := .SecurityGroups }}
+					{{ template "_security_group.html" $sg }}
+				{{ end }}
+			{{ end }}
+		{{ end }}
+
+
+	</data>
+ </instance>

@@ -1,0 +1,15 @@
+{{ if .SNSTopics }}
+	<snss class="group">
+		<h1><a href="{{ prefix . }}/snss">SNS Topics</a></h1>
+		{{ range $index, $sns := .SNSTopics }}
+			{{ if not $sns.Inactive }}
+			{{ template "_sns.html" $sns }}
+			{{ end }}
+		{{ end }}
+		{{ range $index, $sns := .SNSTopics }}
+			{{ if $sns.Inactive }}
+			{{ template "_sns.html" $sns }}
+			{{ end }}
+		{{ end }}
+	</snss>
+{{ end }}

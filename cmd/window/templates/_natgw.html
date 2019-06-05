@@ -1,0 +1,25 @@
+<natgw id="{{ .Id }}" class="node state-{{ .State }}{{ if .Inactive }} inactive{{ end }}">
+	<name>NAT GW ({{ .State }})</name>
+	{{ range $index, $addr := .NATGatewayAddresses }}
+		<div>{{ $addr.PrivateIp }}<name> &raquo; </name>{{ $addr.PublicIp }}</div>
+	{{ end }}
+
+	<data>
+		<div><label>Name</label> {{ .Name }}</div>
+		{{ if .DeleteTime.IsZero }}
+			<div><label>CreateTime</label> {{ .CreateTime }}</div>
+		{{ else }}
+			<div><label>DeleteTime</label> {{ .DeleteTime }}</div>
+		{{ end }}
+		<div><label>State</label> {{ .State }}</div>
+		{{ if .FailureCode }}
+			<div><label>FailureCode</label> {{ .FailureCode }}</div>
+			<div><label>FailureMessage</label> {{ .FailureMessage }}</div>
+		{{ end }}
+
+		<div><label>NATGatewayAddresses</label> {{ .NATGatewayAddresses }}</div>
+		<div><label>ProvisionedBandwidth</label> {{ .ProvisionedBandwidth }}</div>
+
+		<div><label>Subnet</label> {{ template "_subnet_sm.html" .Subnet }}</div>
+	</data>
+</natgw>

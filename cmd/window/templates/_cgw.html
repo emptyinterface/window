@@ -1,0 +1,15 @@
+<cgw id="{{ .Id }}" class="node state-{{ .State }}{{ if .Inactive }} inactive{{ end }}">
+	<name>{{ .Name }}</name>
+	<div>{{ .Type }}/<highlight class="state-{{ .State }}">{{ .State }}</highlight></div>
+	{{ .IpAddress }}
+
+	<data>
+		<div><label>Name</label> {{ .Name }}</div>
+		<div><label>BgpAsn</label> {{ .BgpAsn }}</div>
+		<div><label>CustomerGatewayId</label> {{ .CustomerGatewayId }}</div>
+		<div><label>IpAddress</label> {{ .IpAddress }}</div>
+		<div><label>State</label> {{ .State }}</div>
+		<div><label>Tags</label> {{ range $index, $tag := .Tags }}{{ $tag.Key }}:{{ $tag.Value }} {{ end }}</div>
+		<div><label>Type</label> {{ .Type }}</div>
+	</data>
+</cgw>

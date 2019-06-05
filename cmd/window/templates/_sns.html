@@ -1,0 +1,21 @@
+
+<sns id="{{ .Id }}" class="node{{ if .Inactive }} inactive{{ end }}">
+	{{ if .Stats }}
+		<statgroup>
+			<div>{{ rps .Stats.PublishedPerSecond "published" }} @ {{ humanBytes .Stats.PublishSizeAvgBytes 0 }}</div>
+			<div>{{ rps .Stats.DeliveredPerSecond "delivered" }}</div>
+			{{ if .Stats.FailedPerSecond }}
+				<error>{{ rps .Stats.FailedPerSecond "failed" }}</error>
+			{{ end }}
+		</statgroup>
+	{{ end }}
+	<name>{{ .Name }}</name>
+	<div>
+		{{ range $index, $sub := .Subscribers }}
+			<div>{{ $sub.Protocol }} <highlight><terms>{{ $sub.TargetName }}</terms></highlight></div>
+		{{ end }}
+		{{ template "_cloudwatch_errors.html" .CloudWatchAlarms }}
+	</div>
+	<data data-url="/_data/sns/{{ .Id }}"></data>
+</sns>
+

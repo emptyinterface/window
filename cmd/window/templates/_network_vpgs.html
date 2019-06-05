@@ -1,0 +1,8 @@
+{{ if .VPGateways }}
+	<vpgs class="group">
+		<h1><a href="{{ prefix . }}/vpgs">Virtual Private Gateways</a></h1>
+		{{ range $index, $vpg := .VPGateways }}
+			{{ template "_vpg.html" $vpg }}
+		{{ end }}
+	</vpgs>
+{{ end }}

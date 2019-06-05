@@ -1,0 +1,4 @@
+<securitygroup class="node{{ if .Inactive }} inactive{{ end }}" data-id="{{ .Id }}">
+	<name>{{ .Name }}</name>
+	{{ .PortsInvolved }}
+</securitygroup>

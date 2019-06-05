@@ -1,0 +1,21 @@
+{{ if .InternetGateway }}
+	<network class="group vix">
+		<h1><a href="{{ prefix . }}/network/igws">Internet Gateway</a></h1>
+		{{ if .InternetGateway }}
+			<igwwrap>
+				{{ template "_igw.html" .InternetGateway }}<br>
+				&uarr;&darr;
+			</igwrap>
+		{{ end }}
+		<table><tr>{{ range $index, $az := .AvailabilityZones }}
+			<td><div class="group">
+				<name>{{ $az.Name }}</name>
+				{{ range $index, $subnet := $az.Subnets }}
+					{{ if $subnet.InternetGateway }}
+						{{ template "_subnet.html" $subnet }}
+					{{ end }}
+				{{ end }}
+			</div></td>
+		{{ end }}</tr></table>
+	</network>
+{{ end }}

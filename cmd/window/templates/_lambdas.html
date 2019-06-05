@@ -1,0 +1,8 @@
+{{ if .LambdaFunctions }}
+	<lambdas class="group">
+		<h1><a href="{{ prefix . }}/lambdas">Lambda Functions</a></h1>
+		{{ range $index, $f := .LambdaFunctions }}
+			{{ template "_lambda.html" $f }}
+		{{ end }}
+	</lambdas>
+{{ end }}

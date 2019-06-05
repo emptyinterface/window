@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Window</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<link rel="shortcut icon" href="/assets/ico/favicon.png">
+		<!--[if lt IE 9]><script src="/assets/js/html5shiv.min.js"></script><![endif]-->
+		<link href="/assets/css/main.css" rel="stylesheet">
+		<script src="/assets/js/jquery-2.1.4.min.js"></script>
+		<style>
+			status {
+				display: block;
+				position: fixed;
+				top:20px; left:20px;
+				height: 40px; width: 40px;
+				border-radius: 100px;
+			}
+			status.connected { background-color: rgba(0,255,0,.2); }
+			status.disconnected { background-color: red; }
+			logo {
+				display: none;
+				position: fixed;
+				top: 20px; left: 70px;
+				font-size: 40px;
+				color: rgba(255,255,255,.1);
+				z-index: 200;
+			}
+			filter {
+				display: block;
+				position: fixed;
+				top: 20px;
+				right: 20px;
+				z-index: 200;
+			}
+			filter input {
+				font-size: 18px;
+				background: rgba(255,255,255,.2);
+				border: none;
+				padding: 10px;
+				color: rgba(255,255,255,.3);
+				border-radius: 4px;
+			}
+			cost {
+				display: block;
+				position: fixed;
+				top: 70px;
+				right: 20px;
+				z-index: 200;
+				font-size: 18px;
+				opacity: .6;
+			}
+			breadcrumb {
+				display: block;
+				position: absolute;
+				top: 17px; left: 80px;
+				font-size: 40px;
+				font-weight: bold;
+				color: rgba(255,255,255,.2);
+			}
+			breadcrumb slash {
+				display: inline-block;
+				margin: 0 10px;
+			}
+			main {
+				margin: 120px auto;
+			}
+		</style>
+	</head>
+	<body>
+	  	<logo>Window</logo>
+
+	  	<cost></cost>
+	  	<filter><input tabindex="1" type="text"></filter>
+		<breadcrumb><a href='/'>{{ .Region.Name }}</a><trail></trail></breadcrumb>
+		<main></main>
+		<status></status>
+
+		<script>
+
+			window.performance = window.performance || Date;
+
+			function mitigate_event(f, t) {
+				return function() {
+					clearTimeout(f.timeout);
+					f.timeout = setTimeout(f, t);
+				}
+			}
+
+			// breadcrumb
+			(function() {
+
+				var path_parts = window.location.pathname.split('/'),
+					trail = $('breadcrumb trail'),
+					path = "";
+
+				trail.empty();
+
+				for (var i = 0; i < path_parts.length; i++) {
+					if (path_parts[i]) {
+						path += "/" + path_parts[i];
+						if (path_parts[i] != "vpc") {
+							var a = document.createElement('a');
+							a.href = path;
+							a.innerText = path_parts[i];
+							trail.append('<slash>/</slash>').append(a);
+						}
+					}
+				}
+
+			})();
+
+			// websocket/filter handling
+			(function() {
+
+				function filter(root) {
+					var start = performance.now(),
+						text = $('filter input').val(),
+						top = $(root || document.body);
+
+					window.location.hash = text;
+
+					top.removeClass('filtered')
+						.find('.filtered').removeClass('filtered').end()
+						.find('.shown').removeClass('shown');
+
+					var total = 0.0;
+					if (text) {
+						var regex = new RegExp(text, 'i');
+						top.addClass('filtered')
+							.find('name,terms')
+								.filter(function() { return $(this).text().match(regex); })
+									.each(function() {
+										$(this).closest('.node,.group')
+											.addClass('shown')
+											.find('.node,.group').addClass('shown').end()
+											.parents('.node,.group').addClass('shown');
+									});
+						top.find('.node.shown price').each(function() {
+							total += parseFloat($(this).text().replace(/[^\d\.]/g,''));
+						});
+					} else {
+						top.find('price').each(function() {
+							total += parseFloat($(this).text().replace(/[^\d\.]/g,''));
+						});
+					}
+
+					$('body > cost').text("$"+total.toLocaleString()+"/mo");
+
+					console.log('filter', performance.now()-start);
+				}
+
+				$('filter input').on('keyup', mitigate_event(filter, 150));
+
+				var socket = new WebSocket("wss://" + window.location.host + "/data" + window.location.pathname);
+				socket.onopen = function(e) {
+					window.onbeforeunload = function() { e.target.onclose = null; e.target.close(); };
+					$('status').attr("class", "connected");
+				};
+
+				socket.onerror = console.log.bind(console);
+
+				socket.onclose = function(e) {
+					$('status').attr("class", "disconnected");
+					setTimeout(function() {
+						// try to reconnect every 2 seconds
+						try {
+							var newsocket = new WebSocket(e.target.url);
+							newsocket.onopen = socket.onopen;
+							newsocket.onclose = socket.onclose;
+							newsocket.onmessage = socket.onmessage;
+							newsocket.onerror = socket.onerror;
+						} catch (e) {};
+					}, 2e3);
+				};
+
+				socket.onmessage = function(e) {
+
+					var start = performance.now(),
+						div = document.createElement('div');
+					div.innerHTML = e.data;
+					console.log('ingest html', performance.now()-start);
+
+					var sel = $('.selected');
+					if (sel.length) {
+						var n = sel.length;
+						sel.each(function() {
+							$(div).find('#'+$(this).attr('id'))
+								.addClass('selected')
+								.find('> data[data-url]').each(function(){
+									var url = $(this).attr('data-url');
+									$(this).load(url, function() {
+										if (--n === 0) {
+											filter(div);
+											var start = performance.now();
+											$('main').html(div);
+											console.log('replace html', performance.now()-start);
+										}
+									});
+								});
+						});
+					} else {
+						filter(div);
+						var start = performance.now();
+						$('main').html(div);
+						console.log('replace html', performance.now()-start);
+					}
+				};
+
+			})();
+
+			// selection logic
+			$(window).on('click', function(e) {
+				$(e.target).closest('.group,.node').andSelf()
+					.add('main .selected')
+					.filter('.group,.node')
+					.toggleClass('selected');
+				if ($('main .selected').length) {
+					$('main').addClass('selected');
+				} else {
+					$('main').removeClass('selected');
+				}
+				$('main .selected > data[data-url]:empty').each(function(){
+					var url = $(this).attr('data-url');
+					$(this).text("loading...").load(url);
+				});
+			});
+
+			// bootstrap
+			var text = window.location.hash.replace('#','');
+			if (text) {
+				$('filter input').val(text);
+			}
+
+		</script>
+	</body>
+</html>

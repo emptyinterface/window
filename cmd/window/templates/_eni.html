@@ -1,0 +1,6 @@
+<eni id="{{ .Id }}" class="node state-{{ .State }}{{ if .Inactive }} inactive{{ end }}">
+	<name>{{ .Name }}</name> ({{ .State }})
+	<div><terms>{{ .Description }}</terms></div>
+
+	<data data-url="/_data/eni/{{ .Id }}"></data>
+</eni>

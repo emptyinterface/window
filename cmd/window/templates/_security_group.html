@@ -1,0 +1,7 @@
+<security_group id="{{ .Id }}" class="node{{ if .Inactive }} inactive{{ end }}">
+	<name>{{ .Name }}</name>
+	<div>
+		<div><terms>{{ .PortsInvolved }}</terms></div>
+	</div>
+	<data data-url="/_data/security_group/{{ .Id }}"></data>
+</security_group>

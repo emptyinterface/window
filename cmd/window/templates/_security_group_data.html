@@ -1,0 +1,74 @@
+<div><label>name</label> {{ .Name }}</div>
+<div><label>Used in</label>
+	{{ if .Classic }}Classic{{ end }}
+	{{ range $index, $vpc := .VPCs }}
+	{{ $vpc.Name }}
+	{{ end }}
+</div>
+
+<div><label>Description</label> {{ .Description }}</div>
+<div><label>GroupId</label> {{ .GroupId }}</div>
+<div><label>OwnerId</label> {{ .OwnerId }}</div>
+<div><label>Tags</label>
+	{{ range $index, $tag := .Tags }}{{ $tag.Key }}:{{ $tag.Value }}{{ end }}
+</div>
+
+<table>
+	<tr><th>Protocol</th><th>From</th><th>To</th><th>CIDR</th><th>Type</th></tr>
+	{{ range $index, $ingress := .IpPermissions }}
+		<tr>
+			<td>{{ $ingress.IpProtocol }}</td>
+			<td>{{ $ingress.FromPort }}</td>
+			<td>{{ $ingress.ToPort }}</td>
+			<td>
+				{{ range $index, $range := $ingress.IpRanges }}
+					{{ $range.CidrIp }}<br />
+				{{ end }}
+			</td>
+			<td>Ingress</td>
+		</tr>
+	{{ end }}
+	{{ range $index, $egress := .IpPermissionsEgress }}
+		<tr>
+			<td>{{ $egress.IpProtocol }}</td>
+			<td>{{ $egress.FromPort }}</td>
+			<td>{{ $egress.ToPort }}</td>
+			<td>
+				{{ range $index, $range := $egress.IpRanges }}
+					{{ $range.CidrIp }}<br />
+				{{ end }}
+			</td>
+			<td>Egress</td>
+		</tr>
+	{{ end }}
+</table>
+{{ if .Instances }}
+	<div><label>Instances</label> ({{ len .Instances }})</div>
+	{{ range $index, $inst := .Instances }}
+		{{ template "_instance_sm.html" $inst }}
+	{{ end }}
+{{ end }}
+{{ if .ELBs }}
+	<div><label>ELBs</label> ({{ len .ELBs }})</div>
+	{{ range $index, $elb := .ELBs }}
+		{{ template "_elb_sm.html" $elb }}
+	{{ end }}
+{{ end }}
+{{ if .DBInstances }}
+	<div><label>DBInstances</label> ({{ len .DBInstances }})</div>
+	{{ range $index, $dbinst := .DBInstances }}
+		{{ template "_rds_sm.html" $dbinst }}
+	{{ end }}
+{{ end }}
+{{ if .ElasticCacheClusters }}
+	<div><label>ElasticCacheClusters</label> ({{ len .ElasticCacheClusters }})</div>
+	{{ range $index, $ecc := .ElasticCacheClusters }}
+		{{ template "_ecc_sm.html" $ecc }}
+	{{ end }}
+{{ end }}
+{{ if .LambdaFunctions }}
+	<div><label>LambdaFunctions</label> ({{ len .LambdaFunctions }})</div>
+	{{ range $index, $lf := .LambdaFunctions }}
+		{{ template "_lambda_sm.html" $lf }}
+	{{ end }}
+{{ end }}

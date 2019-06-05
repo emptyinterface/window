@@ -1,0 +1,26 @@
+
+
+<classic>
+
+	<header>
+		<h1><a href="/classic">Classic</a></h1>
+
+		<label>AvailabilityZones</label> {{ len .AvailabilityZones }}
+		<label>SecurityGroups</label> {{ len .SecurityGroups }}
+		<label>AutoScalingGroups</label> {{ len .AutoScalingGroups }}
+		<label>ELBs</label> {{ len .ELBs }}
+		<label>Instances</label> {{ len .Instances }}
+		<label>DBInstances</label> {{ len .DBInstances }}
+		<label>ElasticCacheClusters</label> {{ len .ElasticCacheClusters }}
+		<label>AMIs</label> {{ len .AMIs }}
+	</header>
+
+	{{ template "_elbs.html" . }}
+	{{ template "_amis.html" . }}
+	{{ template "_eccs.html" . }}
+	{{ template "_rdss.html" . }}
+	{{ template "_instances.html" . }}
+
+	{{ template "_security_groups.html" . }}
+
+</classic>

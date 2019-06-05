@@ -1,0 +1,66 @@
+<rds id="{{ .Id }}" class="node state-{{ .State }}{{ if .Inactive }} inactive{{ end }}">
+	{{ if .Stats }}
+	<statgroup>
+			<table class="stats" style="text-align:left;">
+				<tr>
+					<td class="cpu"><table><tr><td><bar style="height:{{ .Stats.CPUUtilization }}%"></bar></td></tr></table></td>
+					<td>
+						<disk><bar style="width:{{ .DiskInUse }}%">Disk</bar></disk>
+					</td>
+				</tr>
+			</table>
+
+			<table class="stats">
+				<tr><td>Connections: {{ .Stats.DatabaseConnections }}</td></tr>
+				<tr><td>FreeableMemory: {{ humanBytes .Stats.FreeableMemory 1 }}</td></tr>
+				{{ if .Stats.SwapUsage }}
+					<tr><td><error>SwapUsage: {{ humanBytes .Stats.SwapUsage 0 }}</error></td></tr>
+				{{ end }}
+				<tr>
+					<td>
+						<network><table><tr>
+							<td>IOPS:</td>
+							<td><arrow>↙</arrow>{{ printf "%.1f" .Stats.WriteIOPS }}</td>
+							<td><arrow>↗</arrow>{{ printf "%.1f" .Stats.ReadIOPS }}</td>
+						</tr></table></network>
+						<network><table><tr>
+							<td>Read:</td>
+							<td>{{ .Stats.ReadLatency.Min }}/{{ .Stats.ReadLatency.Avg }}/{{ .Stats.ReadLatency.Max }}</td>
+						</tr></table></network>
+						<network><table><tr>
+							<td>Write:</td>
+							<td>{{ .Stats.WriteLatency.Min }}/{{ .Stats.WriteLatency.Avg }}/{{ .Stats.WriteLatency.Max }}</td>
+						</tr></table></network>
+						<network><table><tr>
+							<td>Network:</td>
+							<td><arrow>↙</arrow>{{ humanBytes .Stats.NetworkReceiveThroughputBytesPerSecond 0 }}</td>
+							<td><arrow>↗</arrow>{{ humanBytes .Stats.NetworkTransmitThroughputBytesPerSecond 0 }}</td>
+						</tr></table></network>
+						<network><table><tr>
+							<td>Disk:</td>
+							<td><arrow>↙</arrow>{{ humanBytes .Stats.DiskWriteThroughputBytesPerSecond 0 }}</td>
+							<td><arrow>↗</arrow>{{ humanBytes .Stats.DiskReadThroughputBytesPerSecond 0 }}</td>
+						</tr></table></network>
+					</td>
+				</tr>
+			</table>
+			{{ if .Stats.ReplicaLag }}
+			<error>ReplicaLag: {{ .Stats.ReplicaLag }}</error>
+			{{ end }}
+	</statgroup>
+	{{ end }}
+
+	<name>{{ if not .PubliclyAccessible }}({{ end }}{{ .Name }}{{ if not .PubliclyAccessible }}){{ end }}</name>
+	<price>${{ printf "%.2f" .MonthlyCost }}/mo</price>
+	<uptime>{{ uptime .InstanceCreateTime }}</uptime>
+	{{ if not .Stats }}
+		<instanceclass>{{ .DBInstanceClass }}</instanceclass>
+		<dbtype>{{ .Engine }} {{ .EngineVersion }}</dbtype>
+	{{ end }}
+	<allocatedstorage>{{ .AllocatedStorage }} GB</allocatedstorage> <storagetype>{{ .StorageTypeName }}{{ if eq .StorageTypeName "IOPS" }} ({{ .Iops }}/sec){{ end }}</storagetype>
+	<instanceclass>{{ .DBInstanceClass }}</instanceclass> <dbtype>{{ .Engine }} {{ .EngineVersion }}</dbtype>
+
+	{{ template "_cloudwatch_errors.html" .CloudWatchAlarms }}
+
+	<data data-url="/_data/rds/{{ .Id }}"></data>
+</rds>

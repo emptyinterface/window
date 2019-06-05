@@ -1,0 +1,21 @@
+{{ if .DBInstances }}
+	<rdss class="group">
+		<h1><a href="{{ prefix . }}/rdss">RDS Databases</a></h1>
+		<availabilityzones>
+			<table>
+				<tr>{{ range $index, $az := .AvailabilityZones }}{{ if $az.DBInstances }}<th>{{ $az.Name }} ({{ len $az.DBInstances }})</th>{{ end }}{{ end }}</tr>
+				<tr>
+					{{ range $index, $az := .AvailabilityZones }}
+						{{ if $az.DBInstances }}
+							<td>
+							{{ range $index, $rds := $az.DBInstances }}
+								{{ template "_rds.html" $rds }}
+							{{ end }}
+							</td>
+						{{ end }}
+					{{ end }}
+				</tr>
+			</table>
+		</availabilityzones>
+	</rdss>
+{{ end }}

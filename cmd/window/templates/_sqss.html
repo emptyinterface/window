@@ -1,0 +1,8 @@
+{{ if .SQSQueues }}
+	<sqss class="group">
+		<h1><a href="{{ prefix . }}/sqss">SQS Queues</a></h1>
+		{{ range $index, $sqs := .SQSQueues }}
+			{{ template "_sqs.html" $sqs }}
+		{{ end }}
+	</sqss>
+{{ end }}

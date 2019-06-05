@@ -1,0 +1,117 @@
+<style>
+	body { background-color: black; text-align: center; color:white; }
+
+</style>
+
+
+<style>
+
+	gauges {
+		display: block;
+		width: 200px;
+		margin: 20px auto;
+	}
+
+	gauges cpu {
+		display: inline-block;
+		background-color: rgba(255,255,255,.07);
+		border-radius: 4px;
+	}
+	gauges cpu table {
+		width: 100%; height: 60px;
+		table-layout: fixed;
+	}
+	gauges cpu table td {
+		vertical-align: bottom;
+	}
+	gauges cpu table core {
+		display: block;
+		width: 100%;
+		background-color: green;
+		border-radius: 2px;
+	}
+
+	gauges horizontal {
+		display: block;
+		background-color: rgba(255,255,255,.07);
+		border-radius: 4px;
+		text-align: left;
+	}
+	gauges horizontal > * {
+		display: inline-block;
+		height: 30px;
+		border-radius: 2px;
+	}
+
+
+	gauges io {
+		display: block;
+		background-color: rgba(255,255,255,.07);
+		border-radius:4px;
+		text-align: center;
+	}
+	gauges io table {
+		width: 100%; height: 40px;
+		table-layout: fixed;
+	}
+	gauges io table td {
+		position: relative;
+		text-align: center;
+		vertical-align: middle;
+	}
+	gauges io arrow {
+		font-size: 120%;
+		font-weight: bold;
+	}
+	gauges io bar {
+		display: block;
+		height: 100%;
+		opacity: .15;
+		border-radius: 2px;
+		position: absolute;
+		top:0; left:50%;
+		max-width: 100%;
+	}
+
+	gauges io td:nth-child(1) { color: blue; }
+	gauges io td:nth-child(2) { color: orange; }
+	gauges io td:nth-child(1) bar { background-color: blue; }
+	gauges io td:nth-child(2) bar { background-color: orange; }
+
+	gauges memory user { background-color: green; }
+	gauges memory system { background-color: #333; }
+	gauges disk inuse { background-color: #333; }
+
+
+</style>
+
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<body>
+
+	<gauges>
+
+		<memory><horizontal><user style="width:20%"></user><system style="width:45%"></system></horizontal></memory>
+
+		<disk><horizontal><inuse style="width:77%"></inuse></horizontal></disk>
+
+
+		<cpu><table><tr>
+			<td><core style="height:30%"></core></td>
+			<td><core style="height:30%"></core></td>
+			<td><core style="height:30%"></core></td>
+			<td><core style="height:30%"></core></td>
+		</tr></table></cpu>
+
+
+		<network><io><table><tr>
+			<td><arrow>↙</arrow>2 MB<bar style="width:20%;margin-left:-10%;"></bar></td>
+			<td><arrow>↗</arrow>8 MB<bar style="width:70%;margin-left:-35%;"></bar></td>
+		</tr></table></io></network>
+
+	</gauges>
+
+
+</body>
+</html>

@@ -1,0 +1,100 @@
+<vpn id="{{ .Id }}" class="node state-{{ .State }}{{ if .Inactive }} inactive{{ end }}">
+	<name>{{ .Name }}</name> (vpn)
+	<div>{{ .Type }}/<highlight class="state-{{ .State }}">{{ .State }}</highlight></div>
+	<div style="text-align:center">
+		{{ range $index, $t := .VgwTelemetry }}
+			<span class="node state-{{ $t.Status }}"><highlight class="state-{{ $t.Status }}">{{ $t.Status }}</highlight></span>
+		{{ end }}
+	</div>
+	{{ template "_cloudwatch_errors.html" .CloudWatchAlarms }}
+
+	<data>
+		<div><label>Name</label> {{ .Name }}</div>
+		<div><label>State</label> {{ .State }}</div>
+		<div><label>Type</label> {{ .Type }}</div>
+		<div><label>CustomerGatewayId</label> {{ .CustomerGatewayId }}</div>
+		<div><label>VpnConnectionId</label> {{ .VpnConnectionId }}</div>
+		<div><label>VpnGatewayId</label> {{ .VpnGatewayId }}</div>
+		<div><label>StaticRoutesOnly</label> {{ if .Options}}{{ value .Options.StaticRoutesOnly }}{{ end }}</div>
+		<div><label>Routes</label>
+			{{ range $index, $route := .Routes }}
+				<div>{{ $route.DestinationCidrBlock }} ({{ $route.State }})</div>
+			{{ end }}
+		</div>
+		<div><label>VgwTelemetry</label>
+			{{ range $index, $t := .VgwTelemetry }}
+				{{ if (eq (value $t.Status) "UP") }}
+					<ok>{{ $t.OutsideIpAddress }} <highlight class="state-{{ $t.Status }}">{{ $t.Status }}</highlight> {{ uptime $t.LastStatusChange }}</ok>
+				{{ else }}
+					<error>{{ $t.OutsideIpAddress }} {{ $t.Status }} {{ uptime $t.LastStatusChange }}</error>
+				{{ end }}
+			{{ end }}
+		</div>
+		<div><label>Tags</label> {{ range $index, $tag := .Tags }}{{ $tag.Key }}:{{ $tag.Value }} {{ end }}</div>
+		<div><label>VPNConnectionConfiguration</label>
+
+			{{ with $config := .VPNConnectionConfiguration }}
+				<div><label>Id</label> {{ $config.Id }}</div>
+				<div><label>CustomerGatewayId</label> {{ $config.CustomerGatewayId }}</div>
+				<div><label>VpnGatewayId</label> {{ $config.VpnGatewayId }}</div>
+				<div><label>VpnConnectionType</label> {{ $config.VpnConnectionType }}</div>
+				<div><label>VpnConnectionAttributes</label> {{ $config.VpnConnectionAttributes }}</div>
+
+				{{ range $index, $tunnel := $config.Tunnels }}
+
+					<div class="group">
+						<div><label>Tunnel {{ $index }}</label></div>
+
+						<div class="group"><label>IPSec</label>
+							<div><label>Protocol</label> {{ $tunnel.IPSec.Protocol }}</div>
+							<div><label>AuthenticationProtocol</label> {{ $tunnel.IPSec.AuthenticationProtocol }}</div>
+							<div><label>EncryptionProtocol</label> {{ $tunnel.IPSec.EncryptionProtocol }}</div>
+							<div><label>Lifetime</label> {{ $tunnel.IPSec.Lifetime }}</div>
+							<div><label>PerfectForwardSecrecy</label> {{ $tunnel.IPSec.PerfectForwardSecrecy }}</div>
+							<div><label>Mode</label> {{ $tunnel.IPSec.Mode }}</div>
+							<div><label>ClearDFBit</label> {{ $tunnel.IPSec.ClearDFBit }}</div>
+							<div><label>FragmentationBeforeEncryption</label> {{ $tunnel.IPSec.FragmentationBeforeEncryption }}</div>
+							<div><label>TcpMSSAdjustment</label> {{ $tunnel.IPSec.TcpMSSAdjustment }}</div>
+							<div class="node"><label>DeadPeerDetection</label>
+								<div><label>Interval</label> {{ $tunnel.IPSec.DeadPeerDetection.Interval }}</div>
+								<div><label>Retries</label> {{ $tunnel.IPSec.DeadPeerDetection.Retries }}</div>
+							</div>
+						</div>
+
+						<div class="group"><label>IKE</label>
+							<div><label>AuthenticationProtocol</label> {{ $tunnel.IKE.AuthenticationProtocol }}</div>
+							<div><label>EncryptionProtocol</label> {{ $tunnel.IKE.EncryptionProtocol }}</div>
+							<div><label>Lifetime</label> {{ $tunnel.IKE.Lifetime }}</div>
+							<div><label>PerfectForwardSecrecy</label> {{ $tunnel.IKE.PerfectForwardSecrecy }}</div>
+							<div><label>Mode</label> {{ $tunnel.IKE.Mode }}</div>
+						</div>
+
+						<div class="group"><label>CustomerGateway</label>
+							<div>
+								<div class="node"><label>TunnelOutsideAddress</label> {{ $tunnel.CustomerGateway.TunnelOutsideAddress.IPAddress }}</div>
+								<div class="node"><label>TunnelInsideAddress</label> {{ $tunnel.CustomerGateway.TunnelInsideAddress.IPAddress }}
+									<div><label>NetworkMask</label> {{ $tunnel.CustomerGateway.TunnelInsideAddress.NetworkMask }}</div>
+									<div><label>NetworkCidr</label> {{ $tunnel.CustomerGateway.TunnelInsideAddress.NetworkCidr }}</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="group"><label>VPNGateway</label>
+							<div>
+								<div class="node"><label>TunnelOutsideAddress</label> {{ $tunnel.VPNGateway.TunnelOutsideAddress.IPAddress }}</div>
+								<div class="node"><label>TunnelInsideAddress</label> {{ $tunnel.VPNGateway.TunnelInsideAddress.IPAddress }}
+									<div><label>NetworkMask</label> {{ $tunnel.VPNGateway.TunnelInsideAddress.NetworkMask }}</div>
+									<div><label>NetworkCidr</label> {{ $tunnel.VPNGateway.TunnelInsideAddress.NetworkCidr }}</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+				{{ end }}
+
+			{{ end }}
+
+		</div>
+	</data>
+</vpn>

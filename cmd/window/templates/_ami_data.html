@@ -1,0 +1,53 @@
+<div><label>Name</label> {{ .Name }}</div>
+<div><label>ImageId</label> {{ .ImageId }}</div>
+<div><label>Age</label> {{ uptime .CreationDate }}</div>
+<div><label>Description</label> {{ .Description }}</div>
+<div><label>State</label>
+	{{ if (eq .State "failed") }}
+		<warn>{{ .State }}</warn>
+	{{ else }}
+		<highlight class="state-{{ .State }}">{{ .State }}</highlight>
+	{{ end }}
+</div>
+{{ if .StateReason }}<div><label>StateReason</label> {{ .StateReason }}</div>{{ end }}
+<div><label>Architecture</label> {{ .Architecture }}</div>
+<div><label>BlockDeviceMappings</label>
+	{{ range $index, $dev := .BlockDeviceMappings }}
+		<div>
+			{{ $dev.DeviceName }}:
+				{{ if $dev.Ebs }}
+					DOT:{{ $dev.Ebs.DeleteOnTermination }}
+					encrypted:{{ $dev.Ebs.Encrypted }}
+					{{ $dev.Ebs.VolumeSize }}GB/{{ $dev.Ebs.VolumeType }}
+				{{ end }}
+		</div>
+	{{ end }}
+</div>
+<div><label>Hypervisor</label> {{ .Hypervisor }}</div>
+<div><label>ImageLocation</label> {{ .ImageLocation }}</div>
+<div><label>ImageOwnerAlias</label> {{ .ImageOwnerAlias }}</div>
+<div><label>ImageType</label> {{ .ImageType }}</div>
+<div><label>KernelId</label> {{ .KernelId }}</div>
+<div><label>OwnerId</label> {{ .OwnerId }}</div>
+<div><label>Platform</label> {{ .Platform }}</div>
+<div><label>ProductCodes</label>
+	{{ range $index, $code :=  .ProductCodes }}
+		{{ $code.ProductCodeType }}:{{ $code.ProductCodeId }}
+	{{ end }}
+</div>
+<div><label>Public</label> {{ .Public }}</div>
+<div><label>RamdiskId</label> {{ .RamdiskId }}</div>
+<div><label>RootDeviceName</label> {{ .RootDeviceName }}</div>
+<div><label>RootDeviceType</label> {{ .RootDeviceType }}</div>
+<div><label>SriovNetSupport</label> {{ .SriovNetSupport }}</div>
+<div><label>Tags</label>
+	{{ range $index, $tag := .Tags }}
+		<div>{{ $tag.Key }}:{{ $tag.Value }}</div>
+	{{ end }}
+</div>
+<div><label>VirtualizationType</label> {{ .VirtualizationType }}</div>
+
+<div><label>Instances ({{ len .Instances }})</label></div>
+{{ range $index, $inst := .Instances }}
+	{{ template "_instance_sm.html" $inst }}
+{{ end }}

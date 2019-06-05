@@ -1,0 +1,558 @@
+::-webkit-scrollbar { display: none }
+
+html, body {
+	margin:0; padding:0;
+	background-color: black;
+	color: rgba(255,255,255,.3);
+	font-family: Menlo, Futura, sans-serif;
+}
+a { color: rgba(85,26,129, 1); text-decoration: none; }
+a:hover { color:blue; }
+
+h1 { text-align: center; }
+h1 a { color: #333; }
+h1 a:hover { color: blue; }
+h3 { margin:4px 0 0 0;}
+
+ok,
+info,
+warn,
+error {
+	display: block;
+	padding: 10px;
+	margin: 8px;
+}
+
+ok {
+	color: green;
+	border: 2px solid green;
+	background-color: rgba(0,255,0,.3);
+}
+info {
+	color: blue;
+	border: 2px solid blue;
+	background-color: rgba(0,0,255,.3);
+}
+warn {
+	color: orange;
+	border: 2px solid orange;
+	background-color: rgba(255,165,0,.3);
+}
+error {
+	color: red;
+	border: 2px solid red;
+	background-color: rgba(255,0,0,.3);
+}
+
+highlight { color: rgba(255,255,0,.5); }
+.inactive highlight { color: inherit; }
+
+.inactive,
+.inactive statgroup {
+	opacity: .5;
+	color: rgba(255,255,255,.2);
+}
+.inactive.selected {
+	opacity: 1;
+	color: inherit;
+}
+
+
+/* normal states */
+.state-available,
+.state-OK,
+.state-in-use,
+.state-running,
+.state-active,
+.state-UP {}
+
+/* info states */
+.state-pending,
+.state-information,
+.state-creating,
+.state-attaching,
+.state-pending-acceptance,
+.state-backing-up,
+.state-resetting-master-credentials,
+.state-provisioning,
+.state-rejected {
+	color: blue;
+	border: 2px solid blue;
+	background-color: rgba(0,0,255,.3);
+}
+
+/* warning states */
+.state-deleting,
+.state-INSUFFICIENT_DATA,
+.state-modifying,
+.state-rebooting,
+.state-snapshotting,
+.state-detaching,
+.state-shutting-down,
+.state-stopping,
+.state-renaming,
+.state-maintenance,
+.state-upgrading,
+.state-storage-full {
+	color: orange;
+	border: 2px solid orange;
+	background-color: rgba(255,165,0,.3);
+}
+
+/* error states */
+.state-failed,
+.state-impaired,
+.state-ALARM,
+.state-incompatible-network,
+.state-restore-failed,
+.state-inaccessible-encryption-credentials,
+.state-incompatible-credentials,
+.state-incompatible-option-group,
+.state-incompatible-parameters,
+.state-incompatible-restore,
+.state-restore-error,
+.state-unavailable,
+.state-expired,
+.state-DOWN {
+	color: red;
+	border: 2px solid red;
+	background-color: rgba(255,0,0,.3);
+}
+
+/* dead states */
+.state-deleted,
+.state-terminated,
+.state-stopped {
+	opacity: .5;
+}
+
+
+/* override states */
+.state-available name,
+.state-OK name,
+.state-in-use name,
+.state-running name,
+.state-active name,
+.state-UP name { color: green; }
+
+highlight.state-available,
+highlight.state-OK,
+highlight.state-in-use,
+highlight.state-running,
+highlight.state-active,
+highlight.state-UP { color: green; }
+
+ami.state-available  {}
+ami.state-pending    {}
+ami.state-failed     {}
+az.state-available   {}
+az.state-information {}
+az.state-impaired    {}
+az.state-unavailable {}
+cgw.state-pending {}
+cgw.state-available {}
+cgw.state-deleting {}
+cgw.state-deleted {}
+cloudwatchalarm.state-OK {}
+cloudwatchalarm.state-ALARM {}
+cloudwatchalarm.state-INSUFFICIENT_DATA {}
+ecc.state-available {}
+ecc.state-creating {}
+ecc.state-deleted {}
+ecc.state-deleting {}
+ecc.state-incompatible-network {}
+ecc.state-modifying {}
+ecc.state-rebooting {}
+ecc.state-restore-failed {}
+ecc.state-snapshotting {}
+eni.state-available {}
+eni.state-attaching {}
+eni.state-in-use {}
+eni.state-detaching {}
+igw.state-available {}
+instance.state-pending {}
+instance.state-running {}
+instance.state-shutting-down {}
+instance.state-terminated {}
+instance.state-stopping {}
+instance.state-stopped {}
+rds.state-available {}
+rds.state-backing-up {}
+rds.state-creating {}
+rds.state-deleting {}
+rds.state-failed {}
+rds.state-inaccessible-encryption-credentials {}
+rds.state-incompatible-credentials {}
+rds.state-incompatible-network {}
+rds.state-incompatible-option-group {}
+rds.state-incompatible-parameters {}
+rds.state-incompatible-restore {}
+rds.state-maintenance {}
+rds.state-modifying {}
+rds.state-rebooting {}
+rds.state-renaming {}
+rds.state-resetting-master-credentials {}
+rds.state-restore-error {}
+rds.state-storage-full {}
+rds.state-upgrading {}
+subnet.state-pending {}
+subnet.state-available {}
+vpc.state-pending {}
+vpc.state-available {}
+vpce.state-pending {}
+vpce.state-available {}
+vpce.state-deleting {}
+vpce.state-deleted {}
+vpcp.state-pending-acceptance {}
+vpcp.state-failed {}
+vpcp.state-expired {}
+vpcp.state-provisioning {}
+vpcp.state-active {}
+vpcp.state-deleted {}
+vpcp.state-rejected {}
+vpg.state-pending {}
+vpg.state-available {}
+vpg.state-deleting {}
+vpg.state-deleted {}
+vpn.state-pending {}
+vpn.state-available {}
+vpn.state-deleting {}
+vpn.state-deleted {}
+/* end override states */
+
+
+
+header {
+	display: block;
+	width: 60%;
+	margin: 20px auto;
+}
+header label {
+	opacity: .6;
+	text-transform: lowercase;
+}
+
+
+
+
+
+
+
+.group {
+	display: block;
+	background-color: rgba(255,255,255,.1);
+	margin:40px; padding:20px;
+	border-radius: 10px;
+	text-align: center;
+	position: relative;
+	border: 2px solid transparent;
+}
+.group > h1 {
+	display: block;
+	color: black;
+	text-align: left;
+	padding:0;margin: 0;
+}
+.group > h1 a {
+	color:black;
+	text-decoration: none;
+}
+.group > h1 a:hover {
+	color:blue;
+}
+.node {
+	display: inline-block;
+	max-width: 300px;  margin: 8px auto 0;
+	padding: 4px;
+	background-color: rgba(255,255,255,.08);
+	border-radius: 4px;
+	text-align: left;
+	border:2px solid transparent;
+}
+.node > name {
+	display: inline-block;
+	color: #888;
+}
+
+data {
+	display: none;
+	font-size: 14px;
+	color: rgba(255,255,255,.6);
+	border: 2px solid transparent;
+	position: fixed;
+	z-index: 500;
+	top: 5%; left: 5%;
+	max-width: 45%; max-height: 85%;
+	overflow: auto;
+	padding: 30px;
+	background-color: rgba(0,0,0,.9);
+	border-radius: 10px;
+	opacity: 1;
+}
+
+/*.node:hover > data,
+.group:hover > data,
+*/.node.selected > data,
+.group.selected > data {
+	display: block;
+}
+
+.filtered .node:not(.shown),
+.filtered .group:not(.shown) {
+	display: none;
+}
+
+.node:hover ~ data,
+.group:hover ~ data,
+.node.selected:hover ~ data,
+.group.selected:hover ~ data {
+	display: none;
+}
+
+main.selected .node > data,
+main.selected .group > data {
+	left: inherit;
+	right: 5%;
+	z-index: 600;
+}
+main.selected .node.selected > data,
+main.selected .group.selected > data {
+	right: inherit !important;
+	left: 5%;
+}
+
+.node.selected,
+.group.selected {
+	border: 2px solid rgba(255,255,0,.5);
+}
+.node.selected data,
+.group.selected > data {
+	border:2px solid rgba(255,255,0,.5);
+}
+
+.node label,
+.group label {
+	display: inline-block;
+	opacity: .4;
+	text-transform: lowercase;
+}
+
+.policy {
+	margin: 10px auto;
+	padding: 8px;
+	background: #1a1a1a;
+	border-radius: 2px;
+}
+
+availabilityzones > table {
+	width: 100%;
+	table-layout: fixed;
+}
+availabilityzones > table > tbody > th {
+	color: #222;
+}
+availabilityzones > table > tbody > tr > td {
+	vertical-align: top;
+}
+availabilityzones > table > tbody > tr > td > .node {
+	display: block;
+}
+
+subnet.group > instance.node {
+	display: block;
+}
+
+statgroup {
+	display: block;
+	background-color: black;
+	padding:8px; margin: 2px;
+	border-radius:4px;
+	color: rgba(255,255,0,.7);
+	text-align: right;
+}
+statgroup > name {
+	color: #aaa;
+}
+
+
+
+
+price {
+	color: rgba(255,255,255,.15);
+	float: right;
+}
+
+
+
+
+
+
+
+
+
+
+/* replace with gauges -> */
+
+table.stats {
+	background-color: rgba(0,0,0,.6);
+	border-radius: 4px;
+}
+table.stats,
+table.stats .cpu table,
+table.stats network table {
+	border-spacing: 0;
+	border-collapse: separate;
+	width: 100%;
+}
+table.stats td {
+	vertical-align: bottom;
+}
+table.stats disk,
+table.stats memory,
+table.stats network {
+	display: block;
+	clear:both;
+	height: 18px;
+	margin: 4px 0;
+}
+table.stats memory user,
+table.stats memory system,
+table.stats disk bar {
+	display: inline-block;
+	height: 18px;
+}
+table.stats * {
+	border-radius: 2px;
+}
+table.stats network td:first-child {
+	width:50%;
+}
+table.stats network td {
+	white-space: nowrap;
+}
+table.stats network in,
+table.stats network out {
+	display: block;
+	height: 18px;
+	text-align: center;
+	color: rgba(255,255,255,.09);
+	position: relative;
+}
+table.stats network bar {
+	display: block;
+	height: 18px;
+	position: absolute;
+	top:0; left:0;
+}
+table.stats network arrow {
+	font-size: 28px;
+	line-height: 10px;
+}
+table.stats .cpu {
+	width: 50%;
+}
+table.stats .cpu table {
+	width: 97%;
+	height: 70px;
+	margin: 2px 0;
+}
+table.stats .cpu td {
+	vertical-align: bottom;
+}
+table.stats .cpu bar {
+	width: 100%;
+	display: block;
+}
+table.stats .cpu bar { background-color: green; }
+table.stats memory user { background-color: green; }
+table.stats memory system { background-color: #222; }
+table.stats disk bar { background-color: #444; }
+table.stats network in bar { background-color: blue; }
+table.stats network out bar { background-color: orange; }
+
+
+/* entwork */
+
+.vix {
+	text-align: left;
+}
+.vix name {
+	color: rgba(255,255,255,.6);
+}
+.vix label {
+	opacity: .4;
+	text-transform: lowercase;
+}
+.vix > .group {
+	display: inline-block;
+}
+/*.vix * { border: 1px solid red;}*/
+.vix table {
+	width: 100%;
+	table-layout: fixed;
+}
+.vix td {
+	vertical-align: top;
+}
+.vix div.group,
+.vix div.node,
+.vix .group,
+.vix .node {
+	display: block;
+	padding: 10px;
+	margin:4px;
+	max-width: inherit;
+	text-align: left;
+}
+.vix .connectors {
+	text-align: center;
+}
+.vix .connectors .node {
+	display: inline-block;
+}
+.vix igwwrap {
+	display: block;
+	text-align: center;
+}
+.vix igwwrap > .node {
+	display: inline-block;
+}
+
+.rdscpu {
+	height: 10px;
+	background-color: yellow;
+}
+
+elbs {
+	display: block;
+	text-align: left;
+}
+elb.group {
+	display: inline-block;
+	text-align: left;
+	padding: 2px;
+}
+elb.group autoscalinggroup.group,
+elb.group availabilityzone.group,
+elb.group subnet.group {
+	display: inline-block;
+	padding: 2px; margin:2px;
+	text-align: left;
+}
+elb.group {
+	margin: 12px;
+}
+elb > name, elb * > name { display:block; }
+elb autoscalinggroup { background-color: rgba(255,255,255,.05); }
+elb availabilityzone { background-color: rgba(255,255,255,.05); }
+elb subnet { background-color: rgba(255,255,255,.05); }
+elb.group { background-color: rgba(255,255,255,.05); }
+
+security_group > data > table {
+	border-spacing: 0 6px;
+}
+security_group > data > table td {
+	background-color: rgba(255,255,255,.1);
+	padding: 4px;
+	border-radius: 2px;
+}

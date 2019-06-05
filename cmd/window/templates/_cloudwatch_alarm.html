@@ -1,0 +1,41 @@
+<cloudwatchalarm id="{{ .Id }}" class="node state-{{ .State }}{{ if .Inactive }} inactive{{ end }}">
+	<name>{{ .Name }}</name>
+	<div>{{ .Summary }}</div>
+	<div>
+		{{ if eq .StateValue "ALARM" }}
+			<error><terms>{{ .StateValue }} <age>{{ uptime .StateUpdatedTimestamp }}</age></terms></error>
+			<error>{{ .StateReason }}</error>
+			{{ if .AlarmActions }}
+				<div>
+					<div>Alarm Actions:</div>
+					{{ range $index, $sns := .AlarmActionSNSs }}
+						{{ template "_sns_sm.html" $sns }}
+					{{ end }}
+					{{ range $index, $ag := .AlarmActionAutoScalingGroups }}
+						{{ template "_autoscaling_group_sm.html" $ag }}
+					{{ end }}
+				</div>
+			{{ end }}
+		{{ end }}
+
+		{{ if eq .StateValue "INSUFFICIENT_DATA" }}
+			<warn><terms>{{ .StateValue }} <age>{{ uptime .StateUpdatedTimestamp }}</age></terms></warn>
+			{{ if .InsufficientDataActions }}
+				<div>
+					<div>InsufficientData Actions:</div>
+					{{ range $index, $sns := .InsufficientDataActionSNSs }}
+						{{ template "_sns_sm.html" $sns }}
+					{{ end }}
+					{{ range $index, $ag := .InsufficientDataActionAutoScalingGroups }}
+						{{ template "_autoscaling_group_sm.html" $ag }}
+					{{ end }}
+				</div>
+			{{ end }}
+		{{ end }}
+
+		{{ if eq .StateValue "OK" }}
+			<div><terms>{{ .StateValue }} <age>{{ uptime .StateUpdatedTimestamp }}</age></terms></div>
+		{{ end }}
+	</div>
+	<data data-url="/_data/cloudwatch_alarm/{{ .Id }}"></data>
+</cloudwatchalarm>

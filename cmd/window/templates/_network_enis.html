@@ -1,0 +1,24 @@
+{{ if .ENIs }}
+	<enis class="group">
+		<h1><a href="{{ prefix . }}/network/enis">Elastic Network Interfaces</a></h1>
+		<availabilityzones>
+			<table>
+				<tr>{{ range $index, $az := .AvailabilityZones }}{{ if $az.ENIs }}<th>{{ $az.Name }} ({{ len $az.ENIs }})</th>{{ end }}{{ end }}</tr>
+				<tr>
+					{{ range $index, $az := .AvailabilityZones }}
+						<td>
+							{{ range $index, $eni := $az.ENIs }}
+								{{ template "_eni.html" $eni }}
+							{{ end }}
+						</td>
+					{{ end }}
+				</tr>
+			</table>
+		</availabilityzones>
+		{{ range $index, $eni := .ENIs }}
+			{{ if not $eni.AvailabilityZone }}
+			{{ template "_eni.html" $eni }}
+			{{ end }}
+		{{ end }}
+	</enis>
+{{ end }}

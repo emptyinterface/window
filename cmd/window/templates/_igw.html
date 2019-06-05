@@ -1,0 +1,20 @@
+<igw id="{{ .Id }}" class="node state-{{ .State }}{{ if .Inactive }} inactive{{ end }}">
+	<name>{{ .Name }} (igw)</name>
+
+	<data>
+		<div><label>Name</label> {{ .Name }}</div>
+		<div><label>InternetGatewayId</label> {{ .InternetGatewayId }}</div>
+		<div><label>Attachments</label>
+			{{ range $index, $a := .Attachments }}
+				{{ range $index, $vpc := $.VPCs }}
+					{{ if (eq (value $a.VpcId) $vpc.VpcId) }}
+						{{ $vpc.Name }}:{{ value $a.State }}
+					{{ end }}
+				{{ end }}
+			{{ end }}
+		</div>
+		<div><label>Tags</label> {{ range $index, $tag := .Tags }}{{ $tag.Key }}:{{ $tag.Value }} {{ end }}</div>
+
+
+	</data>
+</igw>

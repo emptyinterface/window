@@ -1,0 +1,40 @@
+<div><label>Name</label> {{ .Name }}</div>
+<div><label>Age</label> {{ uptime .LastModifiedTime }}</div>
+<div><label>CodeSha256</label> {{ .CodeSha256 }}</div>
+<div><label>CodeSize</label> {{ humanBytes .CodeSize 1 }}</div>
+<div><label>Description</label> {{ .Description }}</div>
+<div><label>FunctionArn</label> {{ .FunctionArn }}</div>
+<div><label>FunctionName</label> {{ .FunctionName }}</div>
+<div><label>Handler</label> {{ .Handler }}</div>
+<div><label>MemorySize</label> {{ .MemorySize }}</div>
+<div><label>Role</label> {{ .Role }}</div>
+<div><label>Runtime</label> {{ .Runtime }}</div>
+<div><label>Timeout</label> {{ .Timeout }}</div>
+<div><label>Version</label> {{ .Version }}</div>
+
+{{ if .VPC }}
+	<div><label>VPC</label> {{ template "_vpc_sm.html" .VPC }}</div>
+{{ end }}
+
+{{ if .SecurityGroups }}
+	<div><label>SecurityGroups</label>
+	{{ range $index, $sg := .SecurityGroups }}
+		{{ template "_security_group_sm.html" $sg }}
+	{{ end }}
+	</div>
+{{ end }}
+
+
+{{ if .Subnets }}
+	<div><label>Subnets</label>
+	{{ range $index, $subnet := .Subnets }}
+		{{ template "_subnet_sm.html" $subnet }}
+	{{ end }}
+	</div>
+{{ end }}
+
+
+<!-- 		Region           *Region
+		CloudWatchAlarms []*CloudWatchAlarm
+		Stats            *LambdaFunctionStats
+ -->

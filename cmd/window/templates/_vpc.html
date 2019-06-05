@@ -1,0 +1,54 @@
+
+<vpc>
+
+	<header>
+		<a href="https://console.aws.amazon.com/vpc/home?region={{ .Region.Name }}#vpcs:filter={{ .VpcId }}">{{ .Name }}</a>
+
+		<label>Id</label> {{ .Id }}
+		<label>DhcpOptionsId</label> {{ .DhcpOptionsId }}
+		<label>InstanceTenancy</label> {{ .InstanceTenancy }}
+		<label>IsDefault</label> {{ .IsDefault }}
+		<label>State</label> {{ .State }}
+		<label>Tags</label> {{ range $index, $tag := .Tags }}{{ $tag.Key }}:{{ $tag.Value }} {{ end }}
+		<label>ACLs</label> {{ len .ACLs }}
+		<label>AMIs</label> {{ len .AMIs }}
+		<label>AutoScalingGroups</label> {{ len .AutoScalingGroups }}
+		<label>AvailabilityZones</label> {{ len .AvailabilityZones }}
+		<label>CustomerGateways</label> {{ len .CustomerGateways }}
+		<a href="{{ prefix . }}/rdss">RDSs</a> {{ len .DBInstances }}
+		<a href="{{ prefix . }}/eccs">ElasticCacheClusters</a> {{ len .ElasticCacheClusters }}
+		<a href="{{ prefix . }}/elbs">ELBs</a> {{ len .ELBs }}
+		<label>ENIs</label> {{ len .ENIs }}
+		<a href="{{ prefix . }}/instances">Instances</a> {{ len .Instances }}
+		<label>RouteTables</label> {{ len .RouteTables }}
+		<a href="{{ prefix . }}/security_groups">SecurityGroups</a> {{ len .SecurityGroups }}
+		<label>Subnets</label> {{ len .Subnets }}
+		<label>VPCEndpoints</label> {{ len .VPCEndpoints }}
+		<label>VPCPeeringConnections</label> {{ len .VPCPeeringConnections }}
+		<label>VPGateways</label> {{ len .VPGateways }}
+		<label>VPNConnections</label> {{ len .VPNConnections }}
+
+	</header>
+
+	<header>
+		<a href="{{ prefix . }}/network">Network</a>
+		<div><label>CIDR</label> {{ .CidrBlock }}</div>
+		<div><label>TotalIPs</label> {{ .TotalIPs }}</div>
+		<div><label>TotalIPsAllotted</label> {{ .TotalIPsAllotted }}</div>
+		<div><label>TotalIPsAvailable</label> {{ .TotalIPsAvailable }}</div>
+		<div><label>TotalIPsInUse</label> {{ .TotalIPsInUse }}</div>
+		<div><label>Subnets</label> {{ len .Subnets }}</div>
+	</header>
+
+	{{ template "_elbs.html" . }}
+	{{ template "_lambdas.html" . }}
+
+	{{ template "_eccs.html" . }}
+	{{ template "_rdss.html" . }}
+
+	{{ template "_instances.html" . }}
+	{{ template "_security_groups.html" . }}
+	{{ template "_amis.html" . }}
+
+
+</vpc>

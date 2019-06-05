@@ -1,0 +1,27 @@
+<sqs id="{{ .Id }}" class="node{{ if .Inactive }} inactive{{ end }}">
+	{{ if .Stats }}
+		<statgroup>
+			<div>{{ rps .Stats.SentPerSecond "added" }} @ {{ humanBytes .Stats.MessageSizeAvgBytes 0 }}</div>
+			<div>{{ rps .Stats.ReceivedPerSecond "received" }}</div>
+			<div>{{ rps .Stats.DeletedPerSecond "deleted" }}</div>
+			<div>{{ rps .Stats.EmptyReceivesPerSecond "empty gets" }}</div>
+		</statgroup>
+	{{ end }}
+	<name>{{ .Name }}</name>
+	<uptime>{{ uptime .CreatedTimestamp }}</uptime>
+	<div>
+		{{ if .ApproximateNumberOfMessages }}
+			<div>Messages: <highlight>{{ .ApproximateNumberOfMessages }}</highlight></div>
+			<div>MessagesNotVisible: {{ .ApproximateNumberOfMessagesNotVisible }}</div>
+		{{ end }}
+		{{ if .ApproximateNumberOfMessagesDelayed }}
+			<div>
+				<error>MessagesDelayed{{ .ApproximateNumberOfMessagesDelayed }}</error>
+			</div>
+		{{ end }}
+		{{ template "_cloudwatch_errors.html" .CloudWatchAlarms }}
+	</div>
+	<data data-url="/_data/sqs/{{ .Id }}"></data>
+</sqs>
+
+

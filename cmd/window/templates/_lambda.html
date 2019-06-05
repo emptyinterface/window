@@ -1,0 +1,23 @@
+<lambda id="{{ .Id }}" class="node{{ if .Inactive }} inactive{{ end }}">
+	{{ if .Stats }}
+		<statgroup{{ if not .Stats.InvocationsPerSecond }} class="zero"{{ end }}>
+			<runsandlatency>
+				{{ rps .Stats.InvocationsPerSecond "runs" }}
+				@ {{ .Stats.Duration.Min }}/{{ .Stats.Duration.Avg }}/{{ .Stats.Duration.Max }}
+			</runsandlatency>
+			{{ if .Stats.ErrorsPerSecond }}<error>{{ rps .Stats.ErrorsPerSecond "errors" }}</error>{{ end }}
+			{{ if .Stats.TimeoutsPerSecond }}<error>{{ rps .Stats.TimeoutsPerSecond "timeouts" }}</error>{{ end }}
+			{{ if .Stats.ThrottlesPerSecond }}<error>{{ rps .Stats.ThrottlesPerSecond "throttles" }}</error>{{ end }}
+		</statgroup>
+	{{ end }}
+
+	<name>{{ .Name }}</name>
+	<div style="color:#444;">
+		<div>{{ .Description }}</div>
+		<div style="text-align:right;"><highlight>{{ .Runtime }} {{ .MemorySize }}mb {{ .Timeout }}</highlight></div>
+	</div>
+
+	{{ template "_cloudwatch_errors.html" .CloudWatchAlarms }}
+
+	<data data-url="/_data/lambda/{{ .Id }}"></data>
+</lambda>

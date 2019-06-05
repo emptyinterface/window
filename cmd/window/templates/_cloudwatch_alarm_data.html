@@ -1,0 +1,49 @@
+<div><label>Name</label> {{ .Name }}</div>
+<div><label>last configured</label> {{ uptime .AlarmConfigurationUpdatedTimestamp }}</div>
+<h3>{{ .Summary }}</h3>
+<div><label>State</label> {{ .State }} {{ uptime .StateUpdatedTimestamp }}</div>
+{{ if (ne .StateValue "OK") }}<div><label>StateReason</label> {{ .StateReason }}</div>{{ end }}
+
+
+<div><label>AlarmDescription</label> {{ .AlarmDescription }}</div>
+<div><label>ActionsEnabled</label> {{ .ActionsEnabled }}</div>
+
+<div><label>Dimensions</label> {{ .Dimensions }}</div>
+
+
+
+{{ if .AlarmActions }}
+	<div>
+		<div>Alarm Actions:</div>
+		{{ range $index, $sns := .AlarmActionSNSs }}
+			{{ template "_sns_sm.html" $sns }}
+		{{ end }}
+		{{ range $index, $ag := .AlarmActionAutoScalingGroups }}
+			{{ template "_autoscaling_group_sm.html" $ag }}
+		{{ end }}
+	</div>
+{{ end }}
+{{ if .InsufficientDataActions }}
+	<div>
+		<div>InsufficientData Actions:</div>
+		{{ range $index, $sns := .InsufficientDataActionSNSs }}
+			{{ template "_sns_sm.html" $sns }}
+		{{ end }}
+		{{ range $index, $ag := .InsufficientDataActionAutoScalingGroups }}
+			{{ template "_autoscaling_group_sm.html" $ag }}
+		{{ end }}
+	</div>
+{{ end }}
+{{ if .OKActions }}
+	<div>
+		<div>OK Actions:</div>
+		{{ range $index, $sns := .OKActionSNSs }}
+			{{ template "_sns_sm.html" $sns }}
+		{{ end }}
+		{{ range $index, $ag := .OKActionAutoScalingGroups }}
+			{{ template "_autoscaling_group_sm.html" $ag }}
+		{{ end }}
+	</div>
+{{ end }}
+
+<div><label>AlarmArn</label> {{ .AlarmArn }}</div>

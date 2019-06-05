@@ -1,0 +1,42 @@
+
+<region>
+
+	<header>
+		<div>
+			<a href="/classic"><classic class="node"><name>Classic</name></a></classic>
+			{{ range $index, $vpc := .VPCs }}
+				<a href="/vpc/{{ $vpc.Name }}">{{ template "_vpc_sm.html" $vpc }}</a>
+			{{ end }}
+		</div>
+
+		<div>
+			<a href="/elbs">ELBs</a> {{ len .ELBs }}
+			<a href="/rdss">RDSs</a> {{ len .DBInstances }}
+			<a href="/eccs">ElasticCacheClusters</a> {{ len .ElasticCacheClusters }}
+			<a href="/amis">AMIs</a> {{ len .AMIs }}
+			<a href="/cloudwatch_alarms">CloudWatchAlarms</a> {{ len .CloudWatchAlarms }}
+			<a href="/instances">Instances</a> {{ len .Instances }}
+			<a href="/lambdas">LambdaFunctions</a> {{ len .LambdaFunctions }}
+			<a href="/security_groups">SecurityGroups</a> {{ len .SecurityGroups }}
+			<a href="/snss">SNSTopics</a> {{ len .SNSTopics }}
+			<a href="/sqss">SQSQueues</a> {{ len .SQSQueues }}
+		</div>
+	</header>
+
+
+
+	{{ template "_elbs.html" . }}
+	{{ template "_instances.html" . }}
+	{{ template "_eccs.html" . }}
+	{{ template "_rdss.html" . }}
+	{{ template "_lambdas.html" . }}
+	{{ template "_snss.html" . }}
+	{{ template "_sqss.html" . }}
+	{{ template "_security_groups.html" . }}
+	{{ template "_amis.html" . }}
+	{{ template "_cloudwatch_alarms.html" . }}
+
+
+
+
+</region>

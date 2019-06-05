@@ -1,0 +1,30 @@
+{{ if .VPNConnections }}
+	<vpns class="group vix">
+		<h1><a href="{{ prefix . }}/network/vpns">VPN Connections</a></h1>
+		{{ range $index, $vpn := .VPNConnections }}
+			<div class="group">
+				<h1>{{ $vpn.Name }}</h1>
+				{{ if (and $vpn.VPGateway $vpn.CustomerGateway) }}
+					<div class="connectors">
+						{{ template "_cgw.html" $vpn.CustomerGateway }}
+						&harr;
+						{{ template "_vpn.html" $vpn }}
+						&harr;
+						{{ template "_vpg.html" $vpn.VPGateway }}
+						<div>&uarr;&darr;</div>
+					</div>
+					<table><tr>{{ range $index, $az := $.AvailabilityZones }}
+						<td><div class="group">
+							<name>{{ $az.Name }}</name>
+							{{ range $index, $subnet := $vpn.VPGateway.Subnets }}
+								{{ if (eq $subnet.AvailabilityZone.Name $az.Name) }}
+									{{ template "_subnet_sm.html" $subnet }}
+								{{ end }}
+							{{ end }}
+						</div></td>
+					{{ end }}</tr></table>
+				{{ end }}
+			</div>
+		{{ end }}
+	</vpns>
+{{ end }}

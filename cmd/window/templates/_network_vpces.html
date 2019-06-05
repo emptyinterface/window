@@ -1,0 +1,24 @@
+{{ if .VPCEndpoints }}
+	<vpces class="group vix">
+		<h1><a href="{{ prefix . }}/network/vpces">VPC Endpoints</a></h1>
+		{{ range $index, $vpce := .VPCEndpoints }}
+			<div class="group">
+				<h1>{{ $vpce.Name }}</h1>
+				<div class="connectors">
+					{{ template "_vpce.html" $vpce }}
+					{{ if $vpce.Subnets }}<div>&uarr;&darr;</div>{{ end }}
+				</div>
+				<table><tr>{{ range $index, $az := $.AvailabilityZones }}
+					<td><div class="group">
+						<name>{{ $az.Name }}</name>
+						{{ range $index, $subnet := $vpce.Subnets }}
+							{{ if (eq $subnet.AvailabilityZone.Name $az.Name) }}
+								{{ template "_subnet_sm.html" $subnet }}
+							{{ end }}
+						{{ end }}
+					</div></td>
+				{{ end }}</tr></table>
+			</div>
+		{{ end }}
+	</vpces>
+{{ end }}

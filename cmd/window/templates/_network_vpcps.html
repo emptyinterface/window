@@ -1,0 +1,106 @@
+{{ if .VPCPeeringConnections }}
+	<vpcps class="group vix">
+		<h1><a href="{{ prefix . }}/network/vpcps">VPC Peering Connections</a></h1>
+		{{ range $index, $vpcp := .VPCPeeringConnections }}
+			<div class="group">
+				<h1>{{ $vpcp.Name }}</h1>
+
+				{{ if (same $vpcp.RequesterVPC $) }}
+					{{ if $vpcp.AccepterVPC }}
+						<div class="group">
+							<div>{{ $vpcp.AccepterVPC.Name }}</div>
+							<table><tr>{{ range $index, $az := $vpcp.AccepterVPC.AvailabilityZones }}
+								<td><div class="group">
+									<name>{{ $az.Name }}</name>
+									{{ range $index, $subnet := $vpcp.AccepterVPC.Subnets }}
+										{{ if (eq $subnet.AvailabilityZone.Name $az.Name) }}
+											{{ range $index, $_vpcp := $subnet.VPCPeeringConnections }}
+												{{ if (same $_vpcp $vpcp) }}
+													{{ template "_subnet_sm.html" $subnet }}
+												{{ end }}
+											{{ end }}
+										{{ end }}
+									{{ end }}
+								</div></td>
+							{{ end }}</tr></table>
+						</div>
+					{{ end }}
+
+					<div class="connectors">
+						{{ if $vpcp.RequesterVPC }}<div>&uarr;&darr;</div>{{ end }}
+						{{ template "_vpcp.html" $vpcp }}
+						{{ if $vpcp.AccepterVPC }}<div>&uarr;&darr;</div>{{ end }}
+					</div>
+
+					{{ if $vpcp.RequesterVPC }}
+						<div class="group">
+							<div>{{ $vpcp.RequesterVPC.Name }}</div>
+							<table><tr>{{ range $index, $az := $vpcp.RequesterVPC.AvailabilityZones }}
+								<td><div class="group">
+									<name>{{ $az.Name }}</name>
+									{{ range $index, $subnet := $vpcp.RequesterVPC.Subnets }}
+										{{ if (eq $subnet.AvailabilityZone.Name $az.Name) }}
+											{{ range $index, $_vpcp := $subnet.VPCPeeringConnections }}
+												{{ if (same $_vpcp $vpcp) }}
+													{{ template "_subnet_sm.html" $subnet }}
+												{{ end }}
+											{{ end }}
+										{{ end }}
+									{{ end }}
+								</div></td>
+							{{ end }}</tr></table>
+						</div>
+					{{ end }}
+				{{ else }}
+					{{ if $vpcp.RequesterVPC }}
+						<div class="group">
+							<div>{{ $vpcp.RequesterVPC.Name }}</div>
+							<table><tr>{{ range $index, $az := $vpcp.RequesterVPC.AvailabilityZones }}
+								<td><div class="group">
+									<name>{{ $az.Name }}</name>
+									{{ range $index, $subnet := $vpcp.RequesterVPC.Subnets }}
+										{{ if (eq $subnet.AvailabilityZone.Name $az.Name) }}
+											{{ range $index, $_vpcp := $subnet.VPCPeeringConnections }}
+												{{ if (same $_vpcp $vpcp) }}
+													{{ template "_subnet_sm.html" $subnet }}
+												{{ end }}
+											{{ end }}
+										{{ end }}
+									{{ end }}
+								</div></td>
+							{{ end }}</tr></table>
+						</div>
+					{{ end }}
+
+					<div class="connectors">
+						{{ if $vpcp.RequesterVPC }}<div>&uarr;&darr;</div>{{ end }}
+						{{ template "_vpcp.html" $vpcp }}
+						{{ if $vpcp.AccepterVPC }}<div>&uarr;&darr;</div>{{ end }}
+					</div>
+
+					{{ if $vpcp.AccepterVPC }}
+						<div class="group">
+							<div>{{ $vpcp.AccepterVPC.Name }}</div>
+							<table><tr>{{ range $index, $az := $vpcp.AccepterVPC.AvailabilityZones }}
+								<td><div class="group">
+									<name>{{ $az.Name }}</name>
+									{{ range $index, $subnet := $vpcp.AccepterVPC.Subnets }}
+										{{ if (eq $subnet.AvailabilityZone.Name $az.Name) }}
+											{{ range $index, $_vpcp := $subnet.VPCPeeringConnections }}
+												{{ if (same $_vpcp $vpcp) }}
+													{{ template "_subnet_sm.html" $subnet }}
+												{{ end }}
+											{{ end }}
+										{{ end }}
+									{{ end }}
+								</div></td>
+							{{ end }}</tr></table>
+						</div>
+					{{ end }}
+				{{ end }}
+
+
+			</div>
+		{{ end }}
+	</vpcps>
+{{ end }}

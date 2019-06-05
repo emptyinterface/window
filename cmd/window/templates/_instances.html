@@ -1,0 +1,21 @@
+{{ if .Instances }}
+	<instances class="group">
+		<h1><a href="{{ prefix . }}/instances">Instances</a></h1>
+		<availabilityzones>
+			<table>
+				<tr>{{ range $index, $az := .AvailabilityZones }}{{ if $az.Instances }}<th>{{ $az.Name }} ({{ len $az.Instances }})</th>{{ end }}{{ end }}</tr>
+				<tr>
+					{{ range $index, $az := .AvailabilityZones }}
+						<td>
+							{{ range $index, $instance := $az.Instances }}
+								{{ if not $instance.ELB }}
+									{{ template "_instance.html" $instance }}
+								{{ end }}
+							{{ end }}
+						</td>
+					{{ end }}
+				</tr>
+			</table>
+		</availabilityzones>
+	</instances>
+{{ end }}

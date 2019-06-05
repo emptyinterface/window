@@ -1,0 +1,35 @@
+<style>
+	dbinstance {
+		display: inline-block;
+		width: 300px; margin: 8px auto 0;
+		padding: 4px;
+		background-color: rgba(255,0,255,.08);
+		border-radius: 4px;
+		text-align: left;
+	}
+
+	dbinstance > name,
+	dbinstance > uptime {
+		display: inline-block;
+	}
+	dbinstance > name {
+		color: #888;
+	}
+	dbinstance > instanceclass,
+	dbinstance > dbtype {
+		display:block;
+	}
+</style>
+
+<dbinstance id="{{ .Id }}" class="db state-{{ .State }}">
+	<name>
+		{{ if not .PubliclyAccessible }}({{ end }}{{ .Name }}{{ if not .PubliclyAccessible }}){{ end }}
+	</name>
+	<uptime>{{ uptime .InstanceCreateTime }}</uptime>
+
+	<instanceclass>{{ .DBInstanceClass }}</instanceclass>
+	<dbtype>{{ .Engine }} {{ .EngineVersion }}</dbtype>
+	<allocatedstorage>{{ .AllocatedStorage }} GB</allocatedstorage> <storagetype>{{ .StorageTypeName }}{{ if eq .StorageTypeName "IOPS" }} ({{ .Iops }}/sec){{ end }}</storagetype>
+
+	<data data-url="/_data/dbinstance/{{ .Id }}"></data>
+</dbinstance>

@@ -1,0 +1,29 @@
+<div><label>Name</label> {{ .Name }}</div>
+<div><label>QueueUrl</label> {{ .QueueUrl }}</div>
+<div><label>ApproximateNumberOfMessages</label> {{ .ApproximateNumberOfMessages }}</div>
+<div><label>ApproximateNumberOfMessagesNotVisible</label> {{ .ApproximateNumberOfMessagesNotVisible }}</div>
+<div><label>MaximumMessageSize</label> {{ humanBytes .MaximumMessageSize 0 }}</div>
+<div><label>ApproximateNumberOfMessagesDelayed</label> {{ .ApproximateNumberOfMessagesDelayed }}</div>
+<div><label>DelaySeconds</label> {{ .DelaySeconds }}</div>
+<div><label>VisibilityTimeout</label> {{ .VisibilityTimeout }}</div>
+<div><label>MessageRetentionPeriod</label> {{ .MessageRetentionPeriod }}</div>
+<div><label>ReceiveMessageWaitTime</label> {{ .ReceiveMessageWaitTime }}</div>
+<div><label>Created</label> {{ uptime .CreatedTimestamp }}</div>
+<div><label>Modified</label> {{ uptime .LastModifiedTimestamp }}</div>
+<div><label>Policy</label>
+	{{ range $index, $statement := .Policy.Statements }}<div class="policy">
+		<div><label>Effect</label> {{ $statement.Effect }}</div>
+		<div><label>Principal</label> {{ $statement.Principal }}</div>
+		<div><label>Action</label> {{ $statement.Action }}</div>
+		<div><label>Condition</label> {{ $statement.Condition }}</div>
+	</div>{{ end }}
+</div>
+<div><label>RedrivePolicy</label> {{ .RedrivePolicy }}</div>
+<div><label>QueueArn</label> {{ .QueueArn }}</div>
+
+
+
+<!-- 		Region           *Region
+		Stats            *QueueStats
+		CloudWatchAlarms []*CloudWatchAlarm
+ -->
